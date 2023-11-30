@@ -1,0 +1,37 @@
+schema bbq {
+    document bbq {
+        field id type string {
+            indexing: summary | attribute
+        }
+        field name type string {
+            indexing: summary | attribute
+            index: enable-bm25
+        }
+        field description type string {
+            indexing: index | summary
+            index: enable-bm25
+        }
+        field features type string {
+            indexing: index | summary
+            index: enable-bm25
+        }
+        field brand type string {
+            indexing: index | summary
+            index: enable-bm25
+        }
+        field color type string {
+            indexing: index | summary
+            index: enable-bm25
+        }
+        field country type string {
+            indexing: index | summary
+        }
+        field rank type int {
+            indexing: summary | attribute
+        }
+    }
+
+    fieldset default {
+        fields: name, description, features, brand, color
+    }
+}

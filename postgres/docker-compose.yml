@@ -1,0 +1,41 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres:15.3
+    container_name: postgres
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: password
+      POSTGRES_DB: bbq_db
+    ports:
+      - 5432:5432
+    volumes:
+      - ./dev/data:/var/lib/postgresql/data
+    command: ["postgres", "-c", "shared_preload_libraries=pg_trgm"]
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready", "-d", "bbq_db", "-u", "postgres"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - pg-network
+
+  data-loader:
+    image: python:3.9
+    container_name: data-loader
+    depends_on:
+      postgres:
+        condition: service_healthy
+    volumes:
+      - ../testdata/bbq.csv:/bbq.csv
+      - ./dev/load_data.py:/load_data.py
+    command: sh -c "pip install psycopg2 && python /load_data.py"
+    profiles:
+      - tools
+    networks:
+      - pg-network
+
+networks:
+  pg-network:
+    driver: bridge
