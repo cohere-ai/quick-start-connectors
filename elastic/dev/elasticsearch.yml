@@ -1,0 +1,2 @@
+xpack.security.http.ssl.enabled: false
+network.host: 0.0.0.0

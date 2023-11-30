@@ -1,0 +1,44 @@
+version: "3.8"
+services:
+  opensearch:
+    image: opensearchproject/opensearch:2.8.0
+    container_name: opensearch
+    environment:
+      - discovery.type=single-node
+    ports:
+      - 9200:9200
+    volumes:
+      - ./dev/data:/usr/share/opensearch/data
+      - ./dev/opensearch.yml:/usr/share/opensearch/config/opensearch.yml
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --silent --fail -u admin:admin http://localhost:9200/_cluster/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - opensearch-network
+
+  data-loader:
+    image: elasticdump/elasticsearch-dump:v6.101.1
+    container_name: data-loader
+    depends_on:
+      - opensearch
+    volumes:
+      - ../testdata/bbq.csv:/bbq.csv
+    command:
+      - elasticdump
+      - --input=csv:///bbq.csv
+      - --output=http://admin:admin@opensearch:9200/bbq
+      - --type=data
+    profiles:
+      - tools
+    networks:
+      - opensearch-network
+
+networks:
+  opensearch-network:
+    driver: bridge

@@ -1,0 +1,32 @@
+[tool.poetry]
+name = "gmail"
+version = "0.1.0"
+description = "Connects Cohere to GMail"
+authors = ["Scott Mountenay <scott@lightsonsoftware.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+connexion = {version = "2.14.2", extras = ["swagger-ui"]}
+python-dotenv = "^1.0.0"
+flask = "2.2.5"
+requests = "^2.31.0"
+google-api-python-client = "2.92.0"
+google-auth-httplib2 = "0.1.0"
+google-auth-oauthlib = "1.0.0"
+gunicorn = "^21.2.0"
+
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+mypy = "^1.4.1"
+
+
+[tool.poetry.group.development.dependencies]
+black = "^23.7.0"
+types-colorama = "^0.4.15.12"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

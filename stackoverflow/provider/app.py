@@ -1,0 +1,28 @@
+import logging
+
+from flask import abort, current_app as app
+from connexion.exceptions import Unauthorized
+
+from . import UpstreamProviderError, provider
+
+logger = logging.getLogger(__name__)
+
+
+def search(body):
+    logger.debug(f'Search request: {body["query"]}')
+
+    try:
+        data = provider.search(body["query"])
+        logger.info(f"Found {len(data)} results")
+    except UpstreamProviderError as error:
+        logger.error(f"Upstream provider error: {error.message}")
+        abort(502, error.message)
+
+    return {"results": data}
+
+
+def apikey_auth(token):
+    if token != app.config.get("CONNECTOR_API_KEY"):
+        raise Unauthorized()
+    # successfully authenticated
+    return {}
