@@ -24,7 +24,7 @@ Some examples of the use-cases you can enable with this framework:
 * Internal comms summary and search
 * Research using external providers of information, allowing researchers and writers to explore to information from 3rd parties
 
-This open-source repository contains code that will allow you to get started integrating with some of the most popular datastores. Note that different datastores may have different requirements or limitations that need to be addressed in order to to get good quality responses. While some of the quickstart code has been enhanced to address some of these limitations, others only provide the basics of the integration, and you will need to develop them further to fit your specific use-case and the underlying datastore limitations. 
+This open-source repository contains code that will allow you to get started integrating with some of the most popular datastores. There is also an [empty template connector](https://github.com/cohere-ai/quick-start-connectors/tree/main/template) which you can expand to use any datasource. Note that different datastores may have different requirements or limitations that need to be addressed in order to to get good quality responses. While some of the quickstart code has been enhanced to address some of these limitations, others only provide the basics of the integration, and you will need to develop them further to fit your specific use-case and the underlying datastore limitations. 
 
 Please read more about our connectors framework here: LINK TO DOCS
 
