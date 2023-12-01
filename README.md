@@ -46,19 +46,21 @@ All of the connectors in this repository have been tailored to integrate with Co
 
 Cohere's API requires that connectors return documents as an array of JSON objects. Each document should be an object with string keys and string values containing all the relevant information about the document (e.g. `title`, `url`, etc.). For best results the largest text content should be stored in the `text` key.
 
-For example, a connector that returns documents about penguins might return the following:
+For example, a connector that returns documents about company expensing policy might return the following:
 
 ```json
 [
   {
-    "title": "Penguins",
-    "text": "The latin name for Emperor penguin is Aptenodytes forsteri",
-    "url": "https://en.wikipedia.org/wiki/Penguin"
+    "title": "Company Travel Policy",
+    "text": "Flights, Hotels and Meals can be expensed using this new tool...",
+    "url": "https://drive.google.com/file/d/id1"
+    "created_at": "2023-11-25T20:09:31Z",
   },
   {
-    "title": "Penguins",
-    "text": "The latin name for fairy penguin is Eudyptula minor",
-    "url": "https://en.wikipedia.org/wiki/Penguin"
+    "title": "2023 Expenses Policy",
+    "text": "The list of recommended hotels are",
+    "url": "https://drive.google.com/file/d/id2"
+    "created_at": "2022-11-22T20:09:31Z",
   }
 ]
 ```
