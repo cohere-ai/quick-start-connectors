@@ -18,11 +18,29 @@ def search(body):
     #   - a url field that points to the source of the data
     data = [
         {
-            "id": "0",
+            "id": "1",
             "title": "Tall penguins",
-            "text": "Emperor penguins are the tallest",
+            "text": "The tallest penguin is the Emperor penguin",
             "url": "https://en.wikipedia.org/wiki/Penguin",
-        }
+        },
+        {
+            "id": "2",
+            "title": "Emperor penguins",
+            "text": "The latin name for Emperor penguin is Aptenodytes forsteri",
+            "url": "https://en.wikipedia.org/wiki/Penguin",
+        },
+        {
+            "id": "3",
+            "title": "Small penguins",
+            "text": "The smallest penguin is the fairy penguin",
+            "url": "https://en.wikipedia.org/wiki/Penguin",
+        },
+        {
+            "id": "4",
+            "title": "Eudyptula penguis",
+            "text": "The latin name for fairy penguin is Eudyptula minor",
+            "url": "https://en.wikipedia.org/wiki/Penguin",
+        },
     ]
 
     return {"results": data}

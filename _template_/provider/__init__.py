@@ -27,6 +27,6 @@ def create_app() -> connexion.FlaskApp:
     logging.basicConfig(level=logging.INFO)
     flask_app = app.app
     # load environment variables prefixed with the name of the current directory
-    config_prefix = os.path.split(os.getcwd())[1].upper()
+    config_prefix = os.path.split(os.getcwd())[1].upper().replace("_", "")
     flask_app.config.from_prefixed_env(config_prefix)
     return flask_app

@@ -2,6 +2,7 @@
 .vscode/
 **/dev/data/
 *.pyc
+.trunk/
 .DS_Store
 milvus/volumes/
 
