@@ -9,8 +9,8 @@ load_dotenv()
 
 confluence = Confluence(
     url=os.environ.get("CONFLUENCE_PRODUCT_URL"),
-    username=os.environ.get("CONFLUENCE_CLIENT_USER"),
-    password=os.environ.get("CONFLUENCE_CLIENT_PASS"),
+    username=os.environ.get("CONFLUENCE_USER"),
+    password=os.environ.get("CONFLUENCE_API_TOKEN"),
 )
 space = os.environ.get("CONFLUENCE_SPACE_NAME")
 
