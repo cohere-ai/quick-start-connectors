@@ -1,0 +1,37 @@
+# Wikipedia Connector
+
+Connects Cohere to Wikipedia, the free encyclopedia.
+
+## Configuration
+
+Add a `WIKIPEDIA_CONNECTOR_API_KEY` to secure your connector in production environments, otherwise no configuration needed.
+
+You can optionally modify the `WIKIPEDIA_SEARCH_LIMIT` to CHANGE the maximum number of results returned by your search query.
+
+## Development
+
+Create a virtual environment and install dependencies with poetry. We recommend using in-project virtual environments:
+
+```bash
+  poetry config virtualenvs.in-project true
+  poetry install --no-root
+```
+
+To run the Flask server in development mode, please run:
+
+```bash
+  poetry run flask --app provider --debug run
+```
+
+The Flask API will be bound to :code:`localhost:5000`.
+
+```bash
+  curl --request POST \
+    --url http://localhost:5000/search \
+    --header 'Content-Type: application/json' \
+    --data '{
+    "query": "BBQ"
+  }'
+```
+
+Alternatively, load up the Swagger UI and try out the API from a browser: http://localhost:5000/ui/

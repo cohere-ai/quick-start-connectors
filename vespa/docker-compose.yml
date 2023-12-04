@@ -1,0 +1,48 @@
+version: "3"
+services:
+  vespa:
+    image: vespaengine/vespa
+    entrypoint: /launch-and-install.sh
+    ports:
+      - "8080:8080"
+      - "19070:19070"
+      - "19071:19071"
+      - "19092:19092"
+    volumes:
+      - ./dev/app:/opt/vespa/conf/vespa
+      - ./dev/launch-and-install.sh:/launch-and-install.sh
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --silent --fail http://vespa:8080/ApplicationStatus || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - vespa-network
+
+  data-loader:
+    image: python:3.11
+    environment:
+      VESPA_HOST: "vespa"
+      VESPA_PORT: "8080"
+    depends_on:
+      vespa:
+        condition: service_healthy
+    volumes:
+      - ../testdata/bbq.csv:/bbq.csv
+      - ./dev/load_data.py:/code/load_data.py
+    command: >
+      bash -c "
+      pip install --no-cache-dir requests &&
+      python /code/load_data.py"
+    profiles:
+      - tools
+    networks:
+      - vespa-network
+
+networks:
+  vespa-network:
+    driver: bridge

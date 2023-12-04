@@ -1,0 +1,27 @@
+[tool.poetry]
+name = "connector-redis"
+version = "0.1.0"
+description = "Connects Cohere to Redis RediSearch"
+authors = ["Scott Mountenay <scott@lightsonsoftware.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.10"
+connexion = "^2.14.2"
+python-dotenv = "^1.0.0"
+redis = "^4.6.0"
+flask = {version = "2.2.5", extras = ["swagger-ui"]}
+
+[tool.poetry.group.dev.dependencies]
+black = "^23.7.0"
+mypy = "^1.4.1"
+
+
+[tool.poetry.group.development.dependencies]
+black = "^23.7.0"
+types-colorama = "^0.4.15.12"
+types-redis = "^4.6.0.3"
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

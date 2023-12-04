@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  solr:
+    image: solr:9.2.1
+    container_name: solr
+    command: >
+      bash -c "
+      precreate-core bbq /opt/solr/server/solr/configsets/_default && 
+      solr start -f"
+    ports:
+      - 8983:8983
+    volumes:
+      - ./dev/data:/var/solr/data
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --silent --fail http://localhost:8983/solr/admin/info/system || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - solr-network
+
+  data-loader:
+    image: python:3.11
+    container_name: data-loader
+    depends_on:
+      - solr
+    volumes:
+      - ../testdata/bbq.csv:/bbq.csv
+      - ./dev/load_data.py:/code/load_data.py
+    command: >
+      bash -c "
+      pip install --no-cache-dir pysolr &&
+      python /code/load_data.py"
+    profiles:
+      - tools
+    networks:
+      - solr-network
+
+networks:
+  solr-network:
+    driver: bridge

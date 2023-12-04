@@ -1,0 +1,38 @@
+version: '3.5'
+
+services:
+  qdrant:
+    image: qdrant/qdrant
+    ports:
+      - "6333:6333"
+    volumes:
+      - ./dev/data:/qdrant/storage
+      - ./dev/healthcheck.pl:/healthcheck.pl
+    healthcheck:
+      test: ["CMD", "perl", "/healthcheck.pl"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  data-loader:
+    image: python:3.11
+    depends_on:
+      qdrant:
+        condition: service_healthy
+    environment:
+      - QDRANT_CLUSTER_HOST=qdrant
+      - QDRANT_CLUSTER_PORT=6333
+      - QDRANT_COLLECTION=bbq
+    volumes:
+      - ./dev/bbq_embeddings.json:/bbq_embeddings.json
+      - ./dev/load_data.py:/load_data.py
+    command: >
+      bash -c "
+      pip install --no-cache-dir qdrant-client &&
+      python /load_data.py"
+    profiles:
+      - tools
+
+networks:
+  default:
+    name: qdrant

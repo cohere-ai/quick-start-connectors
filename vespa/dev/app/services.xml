@@ -1,0 +1,17 @@
+<services version="1.0">
+    <container id="default" version="1.0">
+        <search>
+            <chain id="default" inherits="vespa"/>
+        </search>
+        <document-api />
+    </container>
+    <content id="bbq" version="1.0">
+        <redundancy>1</redundancy>
+        <documents>
+            <document type="bbq" mode="index"/>
+        </documents>
+        <group>
+            <node distribution-key="0" hostalias="node1"/>
+        </group>
+    </content>
+</services>

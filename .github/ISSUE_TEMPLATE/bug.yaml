@@ -1,0 +1,28 @@
+name: Bug in existing connector
+description: Raise a bug related to an existing connector
+labels:
+  - bug
+body:
+  - type: textarea
+    attributes:
+      label: Which connector is affected?
+      description: Name of connector.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: What is the issue?
+      description: |
+        - Give as much detail as you can to help us understand the bug.
+        - Include any error messages or error codes.
+        - Try to add reproduction steps if possible.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: Any other context, images or comments to add.
+    validations:
+      required: false
