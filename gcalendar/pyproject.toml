@@ -6,7 +6,7 @@ authors = ["Scott Mountenay <scott@lightsonsoftware.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.11"
+python = "^3.10"
 connexion = {version = "2.14.2", extras = ["swagger-ui"]}
 python-dotenv = "^1.0.0"
 flask = "2.2.5"
