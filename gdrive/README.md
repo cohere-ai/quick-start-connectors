@@ -49,6 +49,29 @@ The `GDRIVE_CONNECTOR_API_KEY` should contain an API key for the connector. This
 
 When using OAuth for authentication, the connector does not require any additional environment variables. Instead, the OAuth flow should occur outside of the Connector and Cohere's API will forward the user's access token to this connector through the `Authorization` header.
 
+To use OAuth, you must first create a Google OAuth client ID and secret. You can follow Google's [guide](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred) to get started. When creating your application use `https://api.cohere.com/v1/connectors/oauth/token` as the redirect URI.
+
+Once your Google OAuth credentials are ready, you can register the connector in Cohere's API with the following configuration:
+
+```bash
+curl  -X POST \
+  'https://api.cohere.ai/v1/connectors' \
+  --header 'Accept: */*' \
+  --header 'Authorization: Bearer {COHERE-API-KEY}' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "name": "GDrive with OAuth",
+  "url": "{YOUR_CONNECTOR-URL}",
+  "oauth": {
+    "client_id": "{GOOGLE-OAUTH-CLIENT-ID}",
+    "client_secret": "{GOOGLE-OAUTH-CLIENT-SECRET}",
+    "authorize_url": "https://accounts.google.com/o/oauth2/auth",
+    "token_url": "https://oauth2.googleapis.com/token",
+    "scope": "https://www.googleapis.com/auth/drive.readonly"
+  }
+}'
+```
+
 With OAuth the connector will be able to search any Google Drive folders that the user has access to.
 
 ## Optional Configuration
@@ -70,8 +93,7 @@ Create a virtual environment and install dependencies with poetry. We recommend 
 Next, start up the search connector server:
 
 ```bash
-  $ poetry shell
-  $ flask --app provider --debug run --port 5000
+  $ poetry flask --app provider --debug run --port 5000
 ```
 
 and check with curl to see that everything works:
