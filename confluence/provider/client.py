@@ -1,6 +1,6 @@
+import asyncio
 import functools
 
-import asyncio
 from atlassian import Confluence
 from flask import current_app as app
 
@@ -77,7 +77,7 @@ def get_client():
 
     assert (url := app.config.get("PRODUCT_URL")), "CONFLUENCE_PRODUCT_URL must be set"
     assert (user := app.config.get("USER")), "CONFLUENCE_USER must be set"
-    assert (password := app.config.get("PASSWORD")), "CONFLUENCE_PASSWORD must be set"
+    assert (password := app.config.get("API_TOKEN")), "CONFLUENCE_API_TOKEN must be set"
     assert (space := app.config.get("SPACE_NAME")), "CONFLUENCE_SPACE_NAME must be set"
     search_limit = app.config.get("SEARCH_LIMIT", 10)
     client = ConfluenceClient(url, user, password, space, search_limit)
