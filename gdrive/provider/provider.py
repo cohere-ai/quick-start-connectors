@@ -144,4 +144,4 @@ def search(query, access_token=None):
     except HttpError as http_error:
         raise UpstreamProviderError(message=str(http_error)) from http_error
 
-    return process_data_with_service(search_results, request_credentials)
+    return process_data_with_service(search_results, request_credentials(access_token))
