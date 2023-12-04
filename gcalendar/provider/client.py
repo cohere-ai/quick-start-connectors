@@ -1,51 +1,52 @@
-import logging
-import os
 import datetime
+import logging
 
-from flask import current_app as app
+from flask import request, current_app as app
 from google.auth.transport.requests import Request
+from google.oauth2 import service_account
 from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
 from . import UpstreamProviderError
 
-
 logger = logging.getLogger(__name__)
-
-client = None
+AUTHORIZATION_HEADER = "Authorization"
+BEARER_PREFIX = "Bearer "
+DEFAULT_SEARCH_LIMIT = 20
 
 
 class GoogleCalendarClient:
-    DEFAULT_SEARCH_LIMIT = 20
     SCOPES = [
         "https://www.googleapis.com/auth/calendar.readonly",
     ]
 
-    def __init__(self):
-        creds = None
-        # Handle Authentication
-        if os.path.exists("token.json"):
-            logger.debug("Found token.json file")
-            creds = Credentials.from_authorized_user_file("token.json", self.SCOPES)
+    def __init__(self, service_account_info, access_token, calendar_id, search_limit):
+        self.search_limit = search_limit
+        self.calendar_id = calendar_id
+        self.service = build(
+            "calendar",
+            "v3",
+            credentials=self._request_credentials(service_account_info, access_token),
+        )
 
-        # If there are no (valid) credentials available, let the user log in.
-        if not creds or not creds.valid:
-            logger.debug("No valid credentials found")
-            if creds and creds.expired and creds.refresh_token:
-                creds.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    "credentials.json", self.SCOPES
-                )
-                creds = flow.run_local_server(port=0)
+    def _request_credentials(self, service_account_info=None, access_token=None):
+        if service_account_info is not None:
+            logger.debug("Using service account credentials")
+            credentials = service_account.Credentials.from_service_account_info(
+                service_account_info, scopes=self.SCOPES
+            )
+            if credentials.expired or not credentials.valid:
+                credentials.refresh(Request())
 
-            # Save the credentials for the next run
-            with open("token.json", "w") as token:
-                token.write(creds.to_json())
-
-        self.service = build("calendar", "v3", credentials=creds)
+            return credentials
+        elif access_token is not None:
+            logger.debug("Using oauth credentials")
+            return Credentials(access_token)
+        else:
+            raise UpstreamProviderError(
+                "No service account or oauth credentials provided"
+            )
 
     def _request(self, request):
         try:
@@ -55,10 +56,11 @@ class GoogleCalendarClient:
 
     def search_events(self, query):
         now = datetime.datetime.utcnow().isoformat() + "Z"  # 'Z' indicates UTC time
+
         request = self.service.events().list(
-            calendarId="primary",
+            calendarId=self.calendar_id,
             timeMin=now,
-            maxResults=self.DEFAULT_SEARCH_LIMIT,
+            maxResults=self.search_limit,
             singleEvents=True,
             orderBy="startTime",
             q=query,
@@ -70,8 +72,20 @@ class GoogleCalendarClient:
 
 
 def get_client():
-    global client
-    if client is None:
-        client = GoogleCalendarClient()
+    service_account_info = app.config.get("SERVICE_ACCOUNT_INFO", None)
+    access_token = get_access_token()
+    calendar_id = app.config.get("CALENDAR_ID", "primary")
+    search_limit = app.config.get("SEARCH_LIMIT", DEFAULT_SEARCH_LIMIT)
+    if service_account_info is None and access_token is None:
+        raise AssertionError("No service account or oauth credentials provided")
 
-    return client
+    return GoogleCalendarClient(
+        service_account_info, access_token, calendar_id, search_limit
+    )
+
+
+def get_access_token():
+    authorization_header = request.headers.get(AUTHORIZATION_HEADER, "")
+    if authorization_header.startswith(BEARER_PREFIX):
+        return authorization_header.removeprefix(BEARER_PREFIX)
+    return None
