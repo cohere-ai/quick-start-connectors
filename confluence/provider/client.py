@@ -77,7 +77,9 @@ def get_client():
 
     assert (url := app.config.get("PRODUCT_URL")), "CONFLUENCE_PRODUCT_URL must be set"
     assert (user := app.config.get("USER")), "CONFLUENCE_USER must be set"
-    assert (api_token := app.config.get("API_TOKEN")), "CONFLUENCE_API_TOKEN must be set"
+    assert (
+        api_token := app.config.get("API_TOKEN")
+    ), "CONFLUENCE_API_TOKEN must be set"
     assert (space := app.config.get("SPACE_NAME")), "CONFLUENCE_SPACE_NAME must be set"
     search_limit = app.config.get("SEARCH_LIMIT", 10)
     client = ConfluenceClient(url, user, api_token, space, search_limit)
