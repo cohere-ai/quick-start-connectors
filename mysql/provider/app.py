@@ -9,7 +9,7 @@ logger = logging.getLogger(__name__)
 
 def search(body):
     data = provider.search(body["query"])
-    return {"results": data}
+    return {"results": data}, 200, {"X-Connector-Id": app.config.get("APP_ID")}
 
 
 def search(body):
@@ -22,7 +22,7 @@ def search(body):
         logger.error(f"Upstream search error: {error.message}")
         abort(502, error.message)
 
-    return {"results": data}
+    return {"results": data}, 200, {"X-Connector-Id": app.config.get("APP_ID")}
 
 
 def apikey_auth(token):

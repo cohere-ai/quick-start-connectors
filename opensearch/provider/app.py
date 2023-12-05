@@ -24,7 +24,7 @@ def search(body):
     except Exception as error:
         logger.error(f"Opensearch search error: {error}")
         abort(502, f"Opensearch search error: {error}")
-    return {"results": data}
+    return {"results": data}, 200, {"X-Connector-Id": app.config.get("APP_ID")}
 
 
 def apikey_auth(token):
