@@ -35,6 +35,27 @@ When using OAuth for authentication, the connector does not require any addition
 
 With OAuth the connector will be able to search any Dropbox folders and files that the user has access to.
 
+To configure OAuth, follow the same steps in the Configuration section to create a Dropbox App. You will need to register a redirect URI on that app to `https://api.cohere.com/v1/connectors/oauth/token`. Then, after taking note of your application's `client_id`, you can register the connector with Cohere's API using the following configuration:
+
+```bash
+curl  -X POST \
+  'https://api.cohere.ai/v1/connectors' \
+  --header 'Accept: */*' \
+  --header 'Authorization: Bearer {COHERE-API-KEY}' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "name": "Dropbox with OAuth",
+  "url": "{YOUR_CONNECTOR-URL}",
+  "oauth": {
+    "client_id": "{DROPBOX-OAUTH-CLIENT-ID}",
+    "client_secret": "{GOOGLE-OAUTH-CLIENT-SECRET}",
+    "authorize_url": "https://accounts.google.com/o/oauth2/auth",
+    "token_url": "https://oauth2.googleapis.com/token",
+    "scope": "https://www.googleapis.com/auth/drive.readonly"
+  }
+}'
+```
+
 ## Development
 
 Create a virtual environment and install dependencies with poetry. We recommend using in-project virtual environments:
