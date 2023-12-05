@@ -43,7 +43,7 @@ def search(body):
         },
     ]
 
-    return {"results": data}
+    return {"results": data}, 200, {"X-Connector-Id": app.config.get("APP_ID")}
 
 
 # This function is run for all endpoints to ensure requests are using a valid API key
