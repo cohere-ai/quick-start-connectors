@@ -2,11 +2,10 @@ import logging
 import os
 
 from concurrent.futures import ThreadPoolExecutor, as_completed
-from functools import lru_cache
-from flask import current_app as app
+from flask import request, current_app as app
 from google.auth.transport.requests import Request
+from google.oauth2 import service_account
 from google.oauth2.credentials import Credentials
-from google_auth_oauthlib.flow import InstalledAppFlow
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
@@ -14,46 +13,47 @@ from . import UpstreamProviderError
 
 logger = logging.getLogger(__name__)
 
-CACHE_SIZE = 256
-
-client = None
+AUTHORIZATION_HEADER = "Authorization"
+BEARER_PREFIX = "Bearer "
+DEFAULT_SEARCH_LIMIT = 5
+USER_ME = "me"
 
 
 class GoogleMailClient:
+    FORMAT = "full"
     SCOPES = [
         "https://www.googleapis.com/auth/gmail.readonly",
     ]
 
-    def __init__(self, user_id, search_limit):
+    def __init__(self, service_account_info, access_token, user_id, search_limit):
         self.user_id = user_id
         self.search_limit = search_limit
+        self.service = build(
+            "gmail",
+            "v1",
+            credentials=self._request_credentials(service_account_info, access_token),
+        )
 
-        credentials = None
-
-        # Handle Authentication
-        if os.path.exists("token.json"):
-            logger.debug("Found token.json file")
-            credentials = Credentials.from_authorized_user_file(
-                "token.json", self.SCOPES
+    def _request_credentials(self, service_account_info=None, access_token=None):
+        if service_account_info is not None:
+            logger.debug("Using Service Account credentials")
+            credentials = service_account.Credentials.from_service_account_info(
+                service_account_info, scopes=self.SCOPES
             )
-
-        # If there are no (valid) credentials available, let the user log in.
-        if not credentials or credentials.expired or not credentials.valid:
-            logger.debug("No valid credentials found")
-
-            if credentials and credentials.expired and credentials.refresh_token:
+            if credentials.expired or not credentials.valid:
                 credentials.refresh(Request())
-            else:
-                flow = InstalledAppFlow.from_client_secrets_file(
-                    "credentials.json", self.SCOPES
-                )
-                credentials = flow.run_local_server(port=0)
 
-            # Save the credentials for the next run
-            with open("token.json", "w") as token:
-                token.write(credentials.to_json())
+            # For Service Account auth, need to set user email for delegated access
+            credentials_delegated = credentials.with_subject(self.user_id)
 
-        self.service = build("gmail", "v1", credentials=credentials)
+            return credentials_delegated
+        elif access_token is not None:
+            logger.debug("Using Oauth credentials")
+            return Credentials(access_token)
+        else:
+            raise UpstreamProviderError(
+                "No Service Account or Oauth credentials provided"
+            )
 
     def _request(self, request):
         try:
@@ -61,7 +61,6 @@ class GoogleMailClient:
         except HttpError as http_error:
             raise UpstreamProviderError(message=str(http_error)) from http_error
 
-    @lru_cache(maxsize=CACHE_SIZE)
     def search_mail(self, query):
         request = (
             self.service.users()
@@ -77,12 +76,11 @@ class GoogleMailClient:
 
         return search_results
 
-    @lru_cache(maxsize=CACHE_SIZE)
     def get_message(self, message_id):
         request = (
             self.service.users()
             .messages()
-            .get(format="full", userId=self.user_id, id=message_id)
+            .get(format=self.FORMAT, userId=self.user_id, id=message_id)
         )
 
         message = self._request(request)
@@ -110,11 +108,23 @@ class GoogleMailClient:
 
 
 def get_client():
-    global client
+    service_account_info = app.config.get("SERVICE_ACCOUNT_INFO", None)
+    access_token = get_access_token()
+    user_id = app.config.get("USER_ID")
+    search_limit = app.config.get("SEARCH_LIMIT", DEFAULT_SEARCH_LIMIT)
 
-    if client is None:
-        assert (user_id := app.config.get("USER_ID")), "GMAIL_USER_ID must be set"
-        search_limit = app.config.get("SEARCH_LIMIT", 5)
-        client = GoogleMailClient(user_id, search_limit)
+    if service_account_info is None and access_token is None:
+        raise AssertionError("No service account or oauth credentials provided")
 
-    return client
+    # Using Oauth, use "me" user for current authenticated user
+    if service_account_info is None and access_token is not None:
+        user_id = USER_ME
+
+    return GoogleMailClient(service_account_info, access_token, user_id, search_limit)
+
+
+def get_access_token():
+    authorization_header = request.headers.get(AUTHORIZATION_HEADER, "")
+    if authorization_header.startswith(BEARER_PREFIX):
+        return authorization_header.removeprefix(BEARER_PREFIX)
+    return None
