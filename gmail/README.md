@@ -45,7 +45,30 @@ The `GMAIL_SERVICE_ACCOUNT_INFO` variable should contain the JSON content of the
 
 When using OAuth for authentication, the connector does not require any additional environment variables. Instead, the OAuth flow should occur outside of the Connector and Cohere's API will forward the user's access token to this connector through the `Authorization` header.
 
-With OAuth the connector will be able to search any e-mails the user has access to.
+To use OAuth, you must first create a Google OAuth client ID and secret. You can follow Google's [guide](https://developers.google.com/identity/protocols/oauth2/web-server#creatingcred) to get started. When creating your application use `https://api.cohere.com/v1/connectors/oauth/token` as the redirect URI.
+
+Once your Google OAuth credentials are ready, you can register the connector in Cohere's API with the following configuration:
+
+```bash
+curl  -X POST \
+  'https://api.cohere.ai/v1/connectors' \
+  --header 'Accept: */*' \
+  --header 'Authorization: Bearer {COHERE-API-KEY}' \
+  --header 'Content-Type: application/json' \
+  --data-raw '{
+  "name": "Gmail with OAuth",
+  "url": "{YOUR_CONNECTOR-URL}",
+  "oauth": {
+    "client_id": "{GOOGLE-OAUTH-CLIENT-ID}",
+    "client_secret": "{GOOGLE-OAUTH-CLIENT-SECRET}",
+    "authorize_url": "https://accounts.google.com/o/oauth2/auth",
+    "token_url": "https://oauth2.googleapis.com/token",
+    "scope": "https://www.googleapis.com/auth/gmail.readonly"
+  }
+}'
+```
+
+With OAuth the connector will be able to search any emails the authenticated user has access to.
 
 #### `GMAIL_CONNECTOR_API_KEY`
 
