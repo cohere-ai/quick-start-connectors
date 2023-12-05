@@ -14,11 +14,7 @@ def search(body):
     except UpstreamProviderError as error:
         logger.error(f"Upstream search error: {error.message}")
         abort(502, error.message)
-    except AssertionError as error:
-        logger.error(f"GCalendar connector config error: {error}")
-        abort(502, f"GCalendar connector config error: {error}")
-
-    return {"results": data}
+    return {"results": data}, 200, {"X-Connector-Id": app.config.get("APP_ID")}
 
 
 def apikey_auth(token):

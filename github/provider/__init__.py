@@ -1,3 +1,4 @@
+import os
 import connexion  # type: ignore
 import logging
 
@@ -26,5 +27,9 @@ def create_app() -> connexion.FlaskApp:
     )
     logging.basicConfig(level=logging.INFO)
     flask_app = app.app
-    flask_app.config.from_prefixed_env("GITHUB")
+    config_prefix = os.path.split(os.getcwd())[
+        1
+    ].upper()  # Current directory name, upper-cased
+    flask_app.config.from_prefixed_env(config_prefix)
+    flask_app.config["APP_ID"] = config_prefix
     return flask_app

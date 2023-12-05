@@ -22,7 +22,7 @@ def search(body):
         logger.error(f"Copper provider error: {error}")
         abort(502, f"Copper config error: {error}")
 
-    return {"results": data}
+    return {"results": data}, 200, {"X-Connector-Id": app.config.get("APP_ID")}
 
 
 def apikey_auth(token):

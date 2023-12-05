@@ -15,7 +15,7 @@ def search(body):
     except UpstreamProviderError as error:
         logger.error(f"Upstream search error: {error.message}")
         abort(502, error.message)
-    return {"results": data}
+    return {"results": data}, 200, {"X-Connector-Id": app.config.get("APP_ID")}
 
 
 def apikey_auth(token):

@@ -20,7 +20,7 @@ def search(body):
     except AssertionError as error:
         logger.error(f"Solr config error: {error}")
         abort(502, f"Solr config error: {error}")
-    return {"results": data}
+    return {"results": data}, 200, {"X-Connector-Id": app.config.get("APP_ID")}
 
 
 def apikey_auth(token):
