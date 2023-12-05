@@ -1,0 +1,25 @@
+[tool.poetry]
+name = "algolia"
+version = "0.1.0"
+description = "Connects Cohere to Algolia"
+authors = ["Walter Beller-Morales <walter@cohere.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "2.2.5"
+connexion = { extras = ["swagger-ui"], version = "^2.14.2" }
+algoliasearch = "^3.0.0"
+python-dotenv = "^1.0.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
+
+[tool.poetry.group.dev.dependencies]
+flake8 = "6.0.0"
+isort = "5.10.1"
+black = "22.10.0"
+pytest = "7.4.0"
+pytest-cov = "4.1.0"

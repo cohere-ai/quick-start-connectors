@@ -1,0 +1,45 @@
+version: "3.8"
+services:
+  elasticsearch:
+    image: docker.elastic.co/elasticsearch/elasticsearch:8.8.0
+    container_name: elasticsearch
+    environment:
+      - discovery.type=single-node
+      - ELASTIC_PASSWORD=pass
+    ports:
+      - 9200:9200
+    volumes:
+      - ./dev/data:/usr/share/elasticsearch/data
+      - ./dev/elasticsearch.yml:/usr/share/elasticsearch/config/elasticsearch.yml
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --silent --fail http://localhost:9200/_cluster/health || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - es-network
+
+  data-loader:
+    image: elasticdump/elasticsearch-dump:v6.101.1
+    container_name: data-loader
+    depends_on:
+      - elasticsearch
+    volumes:
+      - ../testdata/bbq.csv:/bbq.csv
+    command:
+      - elasticdump
+      - --input=csv:///bbq.csv
+      - --output=http://elastic:pass@elasticsearch:9200/bbq
+      - --type=data
+    profiles:
+      - tools
+    networks:
+      - es-network
+
+networks:
+  es-network:
+    driver: bridge

@@ -1,0 +1,26 @@
+name: Suggest new connector
+description: Suggest a new connector to add
+labels:
+  - addition
+body:
+  - type: textarea
+    attributes:
+      label: What platform/tool would you like to add as a connector?
+      description: Name of the platform or tool to add.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Why do you want to add this connector?
+      description: Give us details as to why you think this connector would be valuable for your use-case or for the community.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: |
+        - Any other information is much appreciated, such as API documentation, Python SDKs, etc.
+    validations:
+      required: false
