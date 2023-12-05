@@ -18,9 +18,10 @@ Service Account authentication requires two environment variables:
 
 The `GMAIL_SERVICE_ACCOUNT_INFO` variable should contain the JSON content of the service account credentials file. To get the credentials file, follow these steps:
 
-1. [Create a project in Google Cloud Console](https://cloud.google.com/resource-manager/docs/creating-managing-projects).
-2. [Create a service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) and [activate the Google Drive API](https://console.cloud.google.com/apis/api/drive.googleapis.com) in the Google Cloud Console. Make sure that the user(s) you want to search are permitted to use the service account.
-3. [Create a service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) and download the credentials file as JSON. The credentials file should look like this:
+1. [Create a project in Google Cloud Console](https://cloud.google.com/resource-manager/docs/creating-managing-projects). If you have an existing GCP project, use that one instead.
+2. [Active the Gmail API](https://console.cloud.google.com/apis/library/gmail.googleapis.com).
+3. [Create a service account](https://cloud.google.com/iam/docs/creating-managing-service-accounts) and [activate the Google Drive API](https://console.cloud.google.com/apis/api/drive.googleapis.com) in the Google Cloud Console. Make sure that the user(s) you want to search are permitted to use the service account.
+4. [Create a service account key](https://cloud.google.com/iam/docs/creating-managing-service-account-keys) and download the credentials file as JSON. The credentials file should look like this:
 
 ```json
 {
@@ -38,8 +39,8 @@ The `GMAIL_SERVICE_ACCOUNT_INFO` variable should contain the JSON content of the
 }
 ```
 
-4. Convert the JSON credentials to a string and save the result in the `GMAIL_SERVICE_ACCOUNT_INFO` environment variable.
-5. On the Service Accounts page on GCP, copy the client ID value for your newly created service account, you will then need a super administrator user account to access [API Controls](https://admin.google.com/ac/accountchooser?continue=https://admin.google.com/ac/owl) and click on `Manage Domain Wide Delegation` > `Add new` and paste the client ID from earlier, then add the `https://www.googleapis.com/auth/gmail.readonly` to the OAuth Scopes field. Finally, click Authorize.
+5. Convert the JSON credentials to a string and save the result in the `GMAIL_SERVICE_ACCOUNT_INFO` environment variable.
+6. On the Service Accounts page on GCP, copy the client ID value for your newly created service account, you will then need a super administrator user account to access [API Controls](https://admin.google.com/ac/accountchooser?continue=https://admin.google.com/ac/owl) and click on `Manage Domain Wide Delegation` > `Add new` and paste the client ID from earlier, then add the `https://www.googleapis.com/auth/gmail.readonly` to the OAuth Scopes field. Finally, click Authorize.
 
 ### OAuth
 
