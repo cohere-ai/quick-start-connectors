@@ -6,6 +6,8 @@ This package is a utility for connecting Cohere to Dropbox, featuring a simple l
 
 The Dropbox connector currently searches for all active files within your Dropbox instance. Note that new files added will require a couple minutes of indexing time to be searchable. Dropbox usually takes less than 5 minutes.
 
+Currently, file contents are not decoded.
+
 ## Configuration
 
 To use the Dropbox connector, first create an app in the [Developer App Console](https://www.dropbox.com/developers/apps). Select Scoped Access, and give it the access type it needs. Note that `App folder` access will give your app access to a folder specifically created for your app, while `Full Dropbox` access will give your app access to all files and folders currently in your Dropbox instance.
