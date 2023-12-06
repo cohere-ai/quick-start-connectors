@@ -4,9 +4,9 @@ import logging
 from collections import OrderedDict
 from flask import current_app as app
 
-from .consts import CACHE_SIZE
-
 logger = logging.getLogger(__name__)
+
+CACHE_SIZE = 256
 
 unstructured = None
 
@@ -94,10 +94,10 @@ def get_unstructured_client():
     # Fetch environment variables
     assert (
         unstructured_base_url := app.config.get("UNSTRUCTURED_BASE_URL")
-    ), "SHAREPOINT_UNSTRUCTURED_BASE_URL must be set"
+    ), "DROPBOX_UNSTRUCTURED_BASE_URL must be set"
     assert (
         api_key := app.config.get("UNSTRUCTURED_API_KEY")
-    ), "SHAREPOINT_UNSTRUCTURED_API_KEY must be set"
+    ), "DROPBOX_UNSTRUCTURED_API_KEY must be set"
 
     unstructured = UnstructuredRequestSession(unstructured_base_url, api_key)
 

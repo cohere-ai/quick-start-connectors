@@ -42,7 +42,7 @@ class DropboxClient:
 
 
 def get_client(oauth_token=None):
-    search_limit = app.config.get("SEARCH_LIMIT", 5)
+    search_limit = app.config.get("SEARCH_LIMIT", 3)
     path = app.config.get("PATH", "")
     env_token = app.config.get("ACCESS_TOKEN", "")
     token = None
