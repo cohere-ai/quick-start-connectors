@@ -1,0 +1,34 @@
+version: "1"
+services:
+  redis:
+    image: redis/redis-stack:latest
+    container_name: redis
+    restart: unless-stopped
+    ports:
+      - 6379:6379
+    healthcheck:
+      test: ["CMD", "redis-cli", "--raw", "incr", "ping"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - redis-network
+    volumes:
+      - ./redis-data:/data
+
+  data-loader:
+    image: python:3.11
+    depends_on:
+      - redis
+    volumes:
+      - ./dev/bbq.csv:/bbq.csv
+      - ./dev/load_data.py:/load_data.py
+    command: sh -c "pip install redis && python3 /load_data.py"
+    profiles:
+      - tools
+    networks:
+      - redis-network
+
+networks:
+  redis-network:
+    driver: bridge

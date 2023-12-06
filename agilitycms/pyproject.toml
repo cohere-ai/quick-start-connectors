@@ -1,0 +1,21 @@
+[tool.poetry]
+name = "agilitycms"
+version = "0.1.0"
+description = ""
+authors = ["Eugene P <eugene@lightsonsoftware.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "2.2.5"
+connexion = {extras = ["swagger-ui"], version = "^2.14.2"}
+python-dotenv = "^1.0.0"
+requests = "^2.31.0"
+gunicorn = "^21.2.0"
+black = "^23.9.1"
+agility-cms = "^0.1.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

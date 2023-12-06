@@ -1,0 +1,21 @@
+.venv/
+.vscode/
+**/dev/data/
+*.pyc
+.trunk/
+.DS_Store
+milvus/volumes/
+
+# ENV
+.env
+credentials.json
+token.json
+.zuliprc
+
+# Python Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Deployment artifacts
+fly.toml

@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "connector-jira"
+version = "0.1.0"
+description = ""
+authors = ["Alex W <alex@lightsonsoftware.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+atlassian-python-api = "^3.39.0"
+flask = "2.2.5"
+connexion = {extras = ["swagger-ui"], version = "^2.14.2"}
+python-dotenv = "^1.0.0"
+gunicorn = "^21.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

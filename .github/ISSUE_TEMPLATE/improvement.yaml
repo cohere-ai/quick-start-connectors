@@ -1,0 +1,27 @@
+name: Improve existing connector
+description: Make a suggestion to improve the code in an existing connector.
+labels:
+  - improvement
+body:
+  - type: textarea
+    attributes:
+      label: Which connector is affected?
+      description: Name of connector.
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: What would you like to see improved?
+      description: |
+        - Give as much detail as you can to help us understand the change.
+        - Why should these changes be made, and what is the expected change in behavior versus the current one?
+    validations:
+      required: true
+
+  - type: textarea
+    attributes:
+      label: Additional information
+      description: Any other context, images or comments to add.
+    validations:
+      required: false

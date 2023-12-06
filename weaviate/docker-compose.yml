@@ -1,0 +1,58 @@
+version: "3.4"
+services:
+  weaviate:
+    command:
+      - --host
+      - 0.0.0.0
+      - --port
+      - "8080"
+      - --scheme
+      - http
+    image: semitechnologies/weaviate:1.20.1
+    ports:
+      - 8080:8080
+    restart: on-failure:0
+    environment:
+      COHERE_APIKEY: $COHERE_APIKEY
+      QUERY_DEFAULTS_LIMIT: 25
+      AUTHENTICATION_ANONYMOUS_ACCESS_ENABLED: "true"
+      PERSISTENCE_DATA_PATH: "/var/lib/weaviate"
+      DEFAULT_VECTORIZER_MODULE: "text2vec-cohere"
+      ENABLE_MODULES: "text2vec-cohere"
+      CLUSTER_HOSTNAME: "node1"
+    healthcheck:
+      test:
+        [
+          "CMD-SHELL",
+          "curl --silent --fail http://localhost:8080/v1/nodes || exit 1",
+        ]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+    networks:
+      - weaviate-network
+
+  data-loader:
+    image: python:3.11
+    environment:
+      COHERE_APIKEY: $COHERE_APIKEY
+      WEAVIATE_SERVER_URL: "http://weaviate:8080"
+      WEAVIATE_SCHEMA_CLASS: "BbqProduct"
+    depends_on:
+      weaviate:
+        condition: service_started
+    volumes:
+      - ./dev/bbq.csv:/bbq.csv
+      - ./dev/load_data.py:/load_data.py
+    command: >
+      bash -c "
+      pip install --no-cache-dir weaviate-client &&
+      python /load_data.py"
+    profiles:
+      - tools
+    networks:
+      - weaviate-network
+
+networks:
+  weaviate-network:
+    driver: bridge

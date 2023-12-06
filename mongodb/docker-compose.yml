@@ -1,0 +1,32 @@
+version: "1"
+services:
+  mongo:
+    image: mongo:latest
+    container_name: mongo
+    restart: unless-stopped
+    ports:
+      - 27017:27017
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: root
+      MONGO_INITDB_ROOT_PASSWORD: example
+      MONGO_INITDB_DATABASE: bbq
+    networks:
+      - mongo-network
+
+  data-loader:
+    image: python:3.11
+    container_name: data-loader
+    depends_on:
+      - mongo
+    volumes:
+      - ./dev/bbq.csv:/bbq.csv
+      - ./dev/load_data.py:/load_data.py
+    command: sh -c "pip install pymongo python-dotenv && python3 /load_data.py"
+    profiles:
+      - tools
+    networks:
+      - mongo-network
+
+networks:
+  mongo-network:
+    driver: bridge
