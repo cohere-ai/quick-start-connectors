@@ -11,12 +11,11 @@ logger.info("Loading BBQ Test Data")
 
 load_dotenv()
 
-client = pymongo.MongoClient(
-    host=os.environ.get("MONGODB_HOST", "mongo"),
-    port=os.environ.get("MONGODB_PORT", 27017),
-    username=os.environ.get("MONGODB_ROOT_USERNAME", "root"),
-    password=os.environ.get("MONGODB_ROOT_PASSWORD", "example"),
+connection_string = os.environ.get(
+    "CONNECTION_STRING", "mongodb://root:example@mongo:27017"
 )
+
+client = pymongo.MongoClient(connection_string)
 
 fields = []
 

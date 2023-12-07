@@ -1,9 +1,9 @@
-version: "1"
+version: "3.8"
 services:
   mongo:
     image: mongo:latest
     container_name: mongo
-    restart: unless-stopped
+    restart: always
     ports:
       - 27017:27017
     environment:
