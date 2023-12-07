@@ -12,7 +12,7 @@ logger.info("Loading BBQ Test Data")
 load_dotenv()
 
 connection_string = os.environ.get(
-    "CONNECTION_STRING", "mongodb://root:example@mongo:27017"
+    "MONGODB_CONNECTION_STRING", "mongodb://root:example@mongo:27017"
 )
 
 client = pymongo.MongoClient(connection_string)
