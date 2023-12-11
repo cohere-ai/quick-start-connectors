@@ -18,6 +18,8 @@ services:
     container_name: data-loader
     depends_on:
       - mongo
+    environment:
+      MONGODB_CONNECTION_STRING: mongodb://root:example@mongo:27017
     volumes:
       - ./dev/bbq.csv:/bbq.csv
       - ./dev/load_data.py:/load_data.py
