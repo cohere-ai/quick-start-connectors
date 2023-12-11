@@ -4,9 +4,9 @@ import logging
 from collections import OrderedDict
 from flask import current_app as app
 
-from .consts import CACHE_SIZE
-
 logger = logging.getLogger(__name__)
+
+CACHE_SIZE = 256
 
 unstructured = None
 
