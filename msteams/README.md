@@ -10,6 +10,9 @@ The Microsoft Teams connector currently searches for all chat messages within yo
 Note that new messages added will require a couple minutes of indexing time to be searchable.
 
 ## Configuration
+The Teams search connector provides two authentication
+methods: [app-only](https://learn.microsoft.com/en-us/graph/auth-v2-service)
+and [delegated](https://learn.microsoft.com/en-us/graph/auth-v2-user)
 
 To use this search connector, you must have access to Microsoft 365, with API
 credentials configured. This search connector requests default permissions with scope
@@ -23,7 +26,25 @@ permissions must be allowed for MS Graph API:
 - `Files.Read.All`
 - `offline_access`
 
-The Teams search connector provides OAuth [delegated](https://learn.microsoft.com/en-us/graph/auth-v2-user) authentication only.
+
+### App-only
+To use app-only authentication, set the following environment variables:
+
+- `MSTEAMS_GRAPH_AUTH_TYPE` to `application`
+- `MSTEAMS_GRAPH_TENANT_ID`
+- `MSTEAMS_GRAPH_CLIENT_ID`
+- `MSTEAMS_GRAPH_CLIENT_SECRET`
+- `MSTEAMS_USER_ID`
+
+These can be read from a .env file. See `.env-template`.
+
+The values for `MSTEAMS_TENANT_ID`, `MSTEAMS_CLIENT_ID` and `MSTEAMS_CLIENT_SECRET` come from
+Microsoft 365 admin. You must create an app registration in Microsoft 365 admin, and grant
+the appropriate permissions. The MSTEAMS_USER_ID represents the user ID of the individual who registered the app.
+To obtain the user ID, you can use the Microsoft Entra admin center Identity -> Users -> All Users menu and select
+your user. The user ID is the "Object ID" field. This information is essential for app-only authentication and is
+relevant to the limitations of the Microsoft Graph API search functionality.
+
 
 
 #### OAuth
@@ -49,8 +70,9 @@ curl  -X POST \
   "oauth": {
     "client_id": "{Your App CLIENT-ID}",
     "client_secret": "{Your App CLIENT-SECRET}",
-    "authorize_url": "https://login.microsoftonline.com/{Your APP Tenant ID}/oauth2/v2.0/authorize?client_id={Your APP Client ID}"
+    "authorize_url": "https://login.microsoftonline.com/{Your APP Tenant ID}/oauth2/v2.0/authorize"
     "token_url": "https://login.microsoftonline.com/{Your APP Tenant ID}/oauth2/v2.0/token"
+    "scope": ".default offline_access"
   }
 }'
 ```
@@ -68,10 +90,13 @@ To decode attachment's file contents, this connector leverages [Unstructured](ht
 It is necessary to provide the following values in the `.env`:
 
 - `MSTEAMS_UNSTRUCTURED_BASE_URL`
-- `MSTEAMS_UNSTRUCTURED_API_KEY`
+
 
 Use the API key generated earlier. To quickstart usage, you can use the hosted `https://api.unstructured.io` as the base URL, 
-or you can [host your own Unstructured server](https://unstructured-io.github.io/unstructured/apis/usage_methods.html).
+or you can [host your own Unstructured server](https://unstructured-io.github.io/unstructured/apis/usage_methods.html). 
+If you are using the hosted version, it is necessary to provide the following API key value(see above) in the `.env`:
+
+- `MSTEAMS_UNSTRUCTURED_API_KEY`
 
 
 ## Optional configuration
