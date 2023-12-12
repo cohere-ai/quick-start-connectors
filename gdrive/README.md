@@ -38,7 +38,7 @@ The `GDRIVE_SERVICE_ACCOUNT_INFO` variable should contain the JSON content of th
 }
 ```
 
-4. Convert the JSON credentails to a string through `json.dumps(credentials)` and save the result in the `GDRIVE_SERVICE_ACCOUNT_INFO` environment variable.
+4. Convert the JSON credentials to a string through `json.dumps(credentials)` and save the result in the `GDRIVE_SERVICE_ACCOUNT_INFO` environment variable.
 5. Make sure to [share the folder(s) you want to search with the service account email address](https://support.google.com/a/answer/7337554?hl=en).
 
 #### `GDRIVE_CONNECTOR_API_KEY`
@@ -93,7 +93,7 @@ Create a virtual environment and install dependencies with poetry. We recommend 
 Next, start up the search connector server:
 
 ```bash
-  $ poetry flask --app provider --debug run --port 5000
+  $ poetry run flask --app provider --debug run --port 5000
 ```
 
 and check with curl to see that everything works:
