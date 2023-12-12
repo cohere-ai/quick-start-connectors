@@ -1,12 +1,15 @@
 import asyncio
 import aiohttp
 import logging
+import sys
+import functools
 from collections import OrderedDict
 from flask import current_app as app
 
 logger = logging.getLogger(__name__)
 
-CACHE_SIZE = 256
+CACHE_LIMIT_BYTES = 20 * 1024 * 1024  # 20 MB to bytes
+TIMEOUT_SECONDS = 20
 
 unstructured = None
 
@@ -21,11 +24,21 @@ class UnstructuredRequestSession:
 
     def start_session(self):
         self.loop = asyncio.new_event_loop()
-        self.session = aiohttp.ClientSession(loop=self.loop)
+        # Create ClientTimeout object to apply timeout for every request in the session
+        client_timeout = aiohttp.ClientTimeout(total=TIMEOUT_SECONDS)
+        self.session = aiohttp.ClientSession(loop=self.loop, timeout=client_timeout)
 
     def close_loop(self):
         self.loop.stop()
         self.loop.close()
+
+    def cache_size(self):
+        # Calculate the total size of values in bytes
+        total_size_bytes = functools.reduce(
+            lambda a, b: a + b, map(lambda v: sys.getsizeof(v), self.cache.values()), 0
+        )
+
+        return total_size_bytes
 
     def cache_get(self, key):
         self.cache.move_to_end(key)
@@ -35,7 +48,7 @@ class UnstructuredRequestSession:
     def cache_put(self, key, item):
         self.cache[key] = item
 
-        if len(self.cache) > CACHE_SIZE:
+        while self.cache_size() > CACHE_LIMIT_BYTES:
             self.cache.popitem()
 
     async def close_session(self):
