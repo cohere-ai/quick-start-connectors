@@ -42,7 +42,7 @@ services:
       weaviate:
         condition: service_started
     volumes:
-      - ../testdata/bbq.csv:/bbq.csv
+      - ./dev/bbq.csv:/bbq.csv
       - ./dev/load_data.py:/load_data.py
     command: >
       bash -c "

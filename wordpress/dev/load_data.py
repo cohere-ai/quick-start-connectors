@@ -31,7 +31,7 @@ def create_post(row):
         return 0
 
 
-with open("../testdata/bbq.csv", "r") as file:
+with open("./dev/bbq.csv", "r") as file:
     created_count = 0
     reader = csv.DictReader(file)
     for row in reader:

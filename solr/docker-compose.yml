@@ -29,7 +29,7 @@ services:
     depends_on:
       - solr
     volumes:
-      - ../testdata/bbq.csv:/bbq.csv
+      - ./dev/bbq.csv:/bbq.csv
       - ./dev/load_data.py:/code/load_data.py
     command: >
       bash -c "

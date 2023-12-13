@@ -28,7 +28,7 @@ services:
       postgres:
         condition: service_healthy
     volumes:
-      - ../testdata/bbq.csv:/bbq.csv
+      - ./dev/bbq.csv:/bbq.csv
       - ./dev/load_data.py:/load_data.py
     command: sh -c "pip install psycopg2 && python /load_data.py"
     profiles:

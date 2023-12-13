@@ -21,7 +21,7 @@ r = redis.Redis(
 )
 fields = ["Name", "Description", "Features", "Brand", "Color", "Country", "Rank"]
 
-with open("../../testdata/bbq.csv", newline="") as csvfile:
+with open("./dev/bbq.csv", newline="") as csvfile:
     reader = csv.DictReader(csvfile)
 
     for row in reader:

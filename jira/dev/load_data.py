@@ -15,7 +15,7 @@ jira = Jira(
 )
 project_key = os.environ.get("JIRA_ISSUE_KEY")
 
-with open("../testdata/bbq.csv", "r") as csv_file:
+with open("./dev/bbq.csv", "r") as csv_file:
     reader = csv.DictReader(csv_file)
     for i, row in enumerate(reader, start=1):
         issue_key = f"{project_key}-{i}"

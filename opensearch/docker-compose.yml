@@ -28,7 +28,7 @@ services:
     depends_on:
       - opensearch
     volumes:
-      - ../testdata/bbq.csv:/bbq.csv
+      - ./dev/bbq.csv:/bbq.csv
     command:
       - elasticdump
       - --input=csv:///bbq.csv

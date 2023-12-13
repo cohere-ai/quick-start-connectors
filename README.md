@@ -15,7 +15,7 @@
 
 # Overview
 
-Cohere's Build-Your-Own-Connector framework allows you to integrate Cohere's Command LLM via the [co.chat api endpoint](https://docs.cohere.com/reference/chat) to any datastore/software that holds text information and has a corresponding search endpoint exposed in its API. This allows the Command model to generated responses to user queries that are grounded in proprietary information.
+Cohere's Build-Your-Own-Connector framework allows you to integrate Cohere's Command LLM via the [Chat api endpoint](https://docs.cohere.com/reference/chat) to any datastore/software that holds text information and has a corresponding search endpoint exposed in its API. This allows the Command model to generated responses to user queries that are grounded in proprietary information.
 
 Some examples of the use-cases you can enable with this framework:
 
@@ -46,7 +46,7 @@ After configuring the `.env`, you will be able to use `poetry`'s CLI to start a 
 
 # Integrating With Cohere
 
-All of the connectors in this repository have been tailored to integrate with Cohere's [co.chat](https://docs.cohere.com/reference/chat) API to make creating a grounded chatbot quick and easy.
+All of the connectors in this repository have been tailored to integrate with Cohere's [Chat](https://docs.cohere.com/reference/chat) API to make creating a grounded chatbot quick and easy.
 
 Cohere's API requires that connectors return documents as an array of JSON objects. Each document should be an object with string keys and string values containing all the relevant information about the document (e.g. `title`, `url`, etc.). For best results the largest text content should be stored in the `text` key.
 
@@ -69,7 +69,7 @@ For example, a connector that returns documents about company expensing policy m
 ]
 ```
 
-Cohere's [co.chat](https://docs.cohere.com/reference/chat) API will query the connector and use these documents to generated answers with direct citations.
+Cohere's [Chat](https://docs.cohere.com/reference/chat) API will query the connector and use these documents to generated answers with direct citations.
 
 # Contributing
 

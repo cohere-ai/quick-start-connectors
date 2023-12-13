@@ -21,7 +21,7 @@ services:
     depends_on:
       - redis
     volumes:
-      - ../testdata/bbq.csv:/bbq.csv
+      - ./dev/bbq.csv:/bbq.csv
       - ./dev/load_data.py:/load_data.py
     command: sh -c "pip install redis && python3 /load_data.py"
     profiles:

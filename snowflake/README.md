@@ -73,7 +73,7 @@ the value is Cohere field).
 Snowflake has a 30-day trial. For local development of this connector, you can use a Snowflake trial account with the Standard Edition.
 
 The values in `.env-template` are based on creating a Snowflake database named `bbq`, with a schema called
-`bbq`, and the `testdata/bbq.csv` file from this repo being imported into the Snowflake database, using the
+`bbq`, and the `dev/bbq.csv` file from this repo being imported into the Snowflake database, using the
 GUI tool on the Snowflake Account Admin page.
 
 Before importing the CSV, you must create the `bbq` table.

@@ -14,7 +14,7 @@ confluence = Confluence(
 )
 space = os.environ.get("CONFLUENCE_SPACE_NAME")
 
-with open("../testdata/bbq.csv", "r") as csv_file:
+with open("./dev/bbq.csv", "r") as csv_file:
     reader = csv.DictReader(csv_file)
     for row in reader:
         title = row["Name"]
