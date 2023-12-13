@@ -52,21 +52,21 @@ class SharepointClient:
         self.headers = {"Authorization": f"Bearer {self.access_token}"}
 
     def search(self, query):
+        request = {
+            "entityTypes": self.SEARCH_ENTITY_TYPES,
+            "query": {
+                "queryString": query,
+                "size": self.search_limit,
+            },
+        }
+
+        if self.auth_type == self.APPLICATION_AUTH:
+            request["region"] = self.DEFAULT_REGION
+
         response = requests.post(
             f"{self.BASE_URL}/search/query",
             headers={"Authorization": f"Bearer {self.access_token}"},
-            json={
-                "requests": [
-                    {
-                        "entityTypes": self.SEARCH_ENTITY_TYPES,
-                        "region": self.DEFAULT_REGION,
-                        "query": {
-                            "queryString": query,
-                            "size": self.search_limit,
-                        },
-                    }
-                ]
-            },
+            json={"requests": [request]},
         )
 
         if not response.ok:

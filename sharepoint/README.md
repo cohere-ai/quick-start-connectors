@@ -30,7 +30,13 @@ Navigate to Applications > App registrations > New registration option.
 
 Select "Web" as the platform, and add a redirect URI as needed. For App auth, you can set the URI to the server you're hosting the connector on. For Delegated auth, set the URI to `https://api.cohere.com/v1/connectors/oauth/token`.
 
-Next, we will configure your App permissions (this requires Admin access on Entra). Head under your app's API permissions page and select Add a permission > Microsoft Graph > Application Permissions > In the Select Permissions dialog, choose `Application.Read.All`.
+Next, we will configure your App permissions (this requires Admin access on Entra). Head under your app's API permissions page and select Add a permission > Microsoft Graph. From here, select either Application of Delegated permissions as required, and check the following permissions:
+
+- `offline_access` (only if using Delegated)
+- `Application.Read.All`
+- `Files.ReadWrite.All` (MSFT requires this to enable search, though this connector will never write anything)
+
+Go back to API permissions, and as an Admin, select Grant admin consent for MSFT.
 
 Then, head to Certificates & Secrets and create a new client secret.
 
@@ -77,8 +83,8 @@ Next, register the connector with Cohere's API using the following configuration
    "oauth": {
      "client_id": "{Your Microsoft App CLIENT-ID}",
      "client_secret": "{Your Microsoft App CLIENT-SECRET}",
-     "authorize_url": "https://login.microsoftonline.com/{Your Microsoft App TENANT-ID}/oauth2/v2.0/authorize"
-     "token_url": "https://login.microsoftonline.com/{Your Microsoft App TENANT-ID}/oauth2/v2.0/token"
+     "authorize_url": "https://login.microsoftonline.com/{Your Microsoft App TENANT-ID}/oauth2/v2.0/authorize",
+     "token_url": "https://login.microsoftonline.com/{Your Microsoft App TENANT-ID}/oauth2/v2.0/token",
      "scope": ".default offline_access"
    }
  }'
