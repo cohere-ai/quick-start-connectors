@@ -10,17 +10,18 @@ from . import UpstreamProviderError
 
 AUTHORIZATION_HEADER = "Authorization"
 BEARER_PREFIX = "Bearer "
-CACHE_SIZE = 256
 
 
 class MsTeamsClient:
     DEFAULT_SCOPES = ["https://graph.microsoft.com/.default"]
     SEARCH_URL = "https://graph.microsoft.com/v1.0/search/query"
+    SEARCH_ENTITY_TYPES = ["chatMessage"]
     APPLICATION_AUTH = "application"
     DELEGATED_AUTH = "user"
 
     def __init__(self, auth_type, search_limit=5):
         self.access_token = None
+        self.headers = None
         self.user = None
         self.auth_type = auth_type
         self.search_limit = search_limit
@@ -61,6 +62,7 @@ class MsTeamsClient:
                     "Error while retrieving access token from Microsoft Graph API"
                 )
             self.access_token = token_response["access_token"]
+            self.headers = {"Authorization": f"Bearer {self.access_token}"}
         except Exception as e:
             raise UpstreamProviderError(
                 f"Error while initializing Teams client: {str(e)}"
@@ -82,7 +84,7 @@ class MsTeamsClient:
 
         async with self.session.get(
             url,
-            headers={"Authorization": f"Bearer {self.access_token}"},
+            headers=self.headers,
             params=params,
         ) as response:
             content = await response.json()
@@ -107,9 +109,7 @@ class MsTeamsClient:
         graph_api_url = (
             f"https://graph.microsoft.com/v1.0/shares/{prepared}/driveItem/content"
         )
-        async with self.session.get(
-            graph_api_url, headers={"Authorization": f"Bearer {self.access_token}"}
-        ) as response:
+        async with self.session.get(graph_api_url, headers=self.headers) as response:
             content = await response.content.read()
             if not response.ok:
                 return attachment
@@ -146,11 +146,11 @@ class MsTeamsClient:
         results = []
         response = requests.post(
             self.SEARCH_URL,
-            headers={"Authorization": f"Bearer {self.access_token}"},
+            headers=self.headers,
             json={
                 "requests": [
                     {
-                        "entityTypes": ["chatMessage"],
+                        "entityTypes": self.SEARCH_ENTITY_TYPES,
                         "query": {
                             "queryString": query,
                             "size": self.search_limit,
@@ -181,19 +181,12 @@ class MsTeamsClient:
             f"https://graph.microsoft.com/v1.0/users/{self.user}/chats/getAllMessages"
         )
 
-        # Set up the request headers
-        headers = {
-            "Authorization": f"Bearer {self.access_token}",
-            "Accept": "application/json",
-            "Content-Type": "application/json",
-        }
-
         params = {
             "$select": "id,subject,summary,body,from,createdDateTime,webUrl,attachments,eventDetail",
             "$top": self.search_limit,
         }
         # Make a request to the Microsoft Graph API to get messages
-        response = requests.get(graph_api_url, headers=headers, params=params)
+        response = requests.get(graph_api_url, headers=self.headers, params=params)
         if not response.ok:
             raise UpstreamProviderError(
                 f"Error while searching Outlook: {response.text}"

@@ -39,32 +39,39 @@ def serialize_results(results):
     ]
 
 
-def parse_results_attachments(results):
-    attachments_to_unstructured = []
+def prepare_attachments_to_parse(results):
+    attachments_to_parse = []
     for result in results:
-        attachments = result["attachments"]
-        if attachments:
-            for attachment in attachments:
-                if attachment["contentType"] == "reference":
-                    attachments_to_unstructured.append(attachment)
+        attachments_to_parse.extend(
+            [
+                attachment
+                for attachment in result["attachments"]
+                if attachment["contentType"] == "reference"
+            ]
+        )
+    return attachments_to_parse
+
+
+def update_attachments_content(results, parsed_results):
+    for result in results:
+        for attachment in result["attachments"]:
+            attachment["content"] = (
+                parsed_results[attachment["id"]]["content"]
+                if attachment["id"] in parsed_results
+                else ""
+            )
+            result["body"]["content"] += attachment["content"]
+
+
+def parse_results_attachments(results):
+    attachments_to_unstructured = prepare_attachments_to_parse(results)
     if len(attachments_to_unstructured) > 0:
         unstructured_client = get_unstructured_client()
         unstructured_client.start_session()
         unstructured_results = unstructured_client.batch_get(
             attachments_to_unstructured
         )
-        for result in results:
-            attachments = result["attachments"]
-            if attachments:
-                for attachment in attachments:
-                    if attachment["contentType"] == "reference":
-                        attachment["content"] = (
-                            unstructured_results[attachment["id"]]["content"]
-                            if attachment["id"] in unstructured_results
-                            else ""
-                        )
-                        result["body"]["content"] += attachment["content"]
-
+        update_attachments_content(results, unstructured_results)
     return results
 
 

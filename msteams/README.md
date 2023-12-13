@@ -2,7 +2,7 @@
 
 This package is a utility for connecting Cohere to Microsoft Teams.
 
-It uses Microsoft Graph API run the search query and return matching Teams chat messages.
+It uses Microsoft Graph API to run the search query and return matching Teams chat messages.
 
 ## Limitations
 
@@ -40,7 +40,7 @@ These can be read from a .env file. See `.env-template`.
 
 The values for `MSTEAMS_TENANT_ID`, `MSTEAMS_CLIENT_ID` and `MSTEAMS_CLIENT_SECRET` come from
 Microsoft 365 admin. You must create an app registration in Microsoft 365 admin, and grant
-the appropriate permissions. The MSTEAMS_USER_ID represents the user ID of the individual who registered the app.
+the appropriate permissions. The `MSTEAMS_USER_ID` represents the user ID of the individual who registered the app.
 To obtain the user ID, you can use the Microsoft Entra admin center Identity -> Users -> All Users menu and select
 your user. The user ID is the "Object ID" field. This information is essential for app-only authentication and is
 relevant to the limitations of the Microsoft Graph API search functionality.
@@ -49,14 +49,20 @@ relevant to the limitations of the Microsoft Graph API search functionality.
 
 #### OAuth
 
-When using OAuth for authentication, the connector does not require any additional environment variables. Instead, the OAuth flow should occur outside of the Connector and Cohere's API will forward the user's access token to this connector through the `Authorization` header.
+When using OAuth for authentication, set the following environment variable:
+
+- `MSTEAMS_GRAPH_AUTH_TYPE` to `user`
+
+The OAuth flow should occur outside of the Connector and Cohere's API will forward the user's access token
+to this connector through the `Authorization` header.
 
 With OAuth the connector will be able to search any Teams chat messages that the user has access to.
 
-To configure OAuth, follow the same steps in the Configuration section to create a Microsoft 365 App. You will also need to register a redirect URI on that app to `https://api.cohere.com/v1/connectors/oauth/token`.
+To configure OAuth, follow the same steps in the Configuration section to create a Microsoft 365 App. 
+You will also need to register a redirect URI on that app to `https://api.cohere.com/v1/connectors/oauth/token`.
 
 You can then register the connector with Cohere's API using the following configuration:
-Note: Your App key and App secret values correspond to `client_id` and `client_secret` respectively.
+Note: Your `MSTEAMS_GRAPH_CLIENT_ID` and `MSTEAMS_GRAPH_CLIENT_SECRET` values correspond to `client_id` and `client_secret` respectively.
 
 ```bash
 curl  -X POST \
@@ -70,18 +76,14 @@ curl  -X POST \
   "oauth": {
     "client_id": "{Your App CLIENT-ID}",
     "client_secret": "{Your App CLIENT-SECRET}",
-    "authorize_url": "https://login.microsoftonline.com/{Your APP Tenant ID}/oauth2/v2.0/authorize"
-    "token_url": "https://login.microsoftonline.com/{Your APP Tenant ID}/oauth2/v2.0/token"
+    "authorize_url": "https://login.microsoftonline.com/{Your App TENANT-ID}/oauth2/v2.0/authorize"
+    "token_url": "https://login.microsoftonline.com/{Your App TENANT-ID}/oauth2/v2.0/token"
     "scope": ".default offline_access"
   }
 }'
 ```
-
-
-To make a search requests to Microsoft Graph API, the connector needs to be authenticated with a token obtained using
-Oauth 2.0, and passed to the connector in the Authorization header with the Bearer schema.
-
-The connector will search the chat messages accessible by the user who is authenticated.
+No more configuration is needed here and after successfully registration, 
+Cohere will take care of OAuth steps including passing in the correct headers to your connector.
 
 ## Unstructured
 
@@ -119,8 +121,7 @@ https://entra.microsoft.com/
 Navigate to "Applications -> App registrations", and use the "New registration" option.
 
 Select "Web" as the platform, and ensure you add a redirect URL, even if it is optional.
-The redirect URL is required for the admin consent step to work. This connector does not
-have a redirect page implemented, but you can use http://localhost/ as the redirect URL.
+The redirect URL is required for the admin consent step to work. 
 
 On the app registration page for the app you have created, go to API permissions, and
 grant permissions. For development purposes, you can grant:
