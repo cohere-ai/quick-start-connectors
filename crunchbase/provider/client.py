@@ -14,8 +14,8 @@ class CrunchbaseApiClient:
         self.search_limit = search_limit
 
     def get_search_limit(self):
-      return self.search_limit
-    
+        return self.search_limit
+
     def get(self, params={}):
         response = requests.get(self.API_URL, params=params)
 
@@ -24,14 +24,10 @@ class CrunchbaseApiClient:
             raise UpstreamProviderError(message)
 
         return response.json()
-    
+
     def autocomplete(self, term):
         # @see: https://data.crunchbase.com/docs/using-autocomplete-api
-        params = {
-            "query": term,
-            "limit": self.search_limit,
-            "user_key": self.user_key
-        }
+        params = {"query": term, "limit": self.search_limit, "user_key": self.user_key}
         return self.get(params)
 
 
