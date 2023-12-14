@@ -76,8 +76,8 @@ curl  -X POST \
   "oauth": {
     "client_id": "{Your App CLIENT-ID}",
     "client_secret": "{Your App CLIENT-SECRET}",
-    "authorize_url": "https://login.microsoftonline.com/{Your App TENANT-ID}/oauth2/v2.0/authorize"
-    "token_url": "https://login.microsoftonline.com/{Your App TENANT-ID}/oauth2/v2.0/token"
+    "authorize_url": "https://login.microsoftonline.com/{Your App TENANT-ID}/oauth2/v2.0/authorize",
+    "token_url": "https://login.microsoftonline.com/{Your App TENANT-ID}/oauth2/v2.0/token",
     "scope": ".default offline_access"
   }
 }'
