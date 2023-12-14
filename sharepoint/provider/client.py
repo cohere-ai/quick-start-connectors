@@ -14,6 +14,7 @@ class SharepointClient:
     DEFAULT_REGION = "NAM"
     BASE_URL = "https://graph.microsoft.com/v1.0"
     SEARCH_ENTITY_TYPES = ["driveItem"]
+    DRIVE_ITEM_DATA_TYPE = "#microsoft.graph.driveItem"
     APPLICATION_AUTH = "application"
     DELEGATED_AUTH = "user"
 
@@ -42,9 +43,10 @@ class SharepointClient:
                     "Error while retrieving access token from Microsoft Graph API"
                 )
             self.access_token = token_response["access_token"]
+            self.headers = {"Authorization": f"Bearer {self.access_token}"}
         except Exception as e:
             raise UpstreamProviderError(
-                f"Error while initializing Teams client: {str(e)}"
+                f"Error while initializing Sharepoint client: {str(e)}"
             )
 
     def set_user_access_token(self, token):
@@ -65,7 +67,7 @@ class SharepointClient:
 
         response = requests.post(
             f"{self.BASE_URL}/search/query",
-            headers={"Authorization": f"Bearer {self.access_token}"},
+            headers=self.headers,
             json={"requests": [request]},
         )
 
@@ -79,7 +81,7 @@ class SharepointClient:
     def get_drive_item_content(self, parent_drive_id, resource_id):
         response = requests.get(
             f"{self.BASE_URL}/drives/{parent_drive_id}/items/{resource_id}/content",
-            headers={"Authorization": f"Bearer {self.access_token}"},
+            headers=self.headers,
         )
 
         # Fail gracefully when retrieving content

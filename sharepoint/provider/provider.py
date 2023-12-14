@@ -57,7 +57,7 @@ def collect_items(sharepoint_client, hits):
     # Gather data
     drive_items = []
     for hit in hits:
-        if hit["resource"]["@odata.type"] == "#microsoft.graph.driveItem":
+        if hit["resource"]["@odata.type"] == sharepoint_client.DRIVE_ITEM_DATA_TYPE:
             parent_drive_id = hit["resource"]["parentReference"]["driveId"]
             resource_id = hit["resource"]["id"]
             drive_item = sharepoint_client.get_drive_item_content(
