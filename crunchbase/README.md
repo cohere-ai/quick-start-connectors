@@ -27,6 +27,12 @@ CRUNCHBASE_SEARCH_LIMIT
 
 This variable may contain the maximum number of results to return from Crunchbase. Default value is 20.
 
+## Limitations
+
+The Crunchbase API has a limit of 200 requests per minute.
+
+The [Autocomplete API](https://data.crunchbase.com/docs/using-autocomplete-api) included in API v4.0 is intended to help you quickly find the entity you are looking for by suggesting a list of entities based on your query string & the defined collection(s) you are interested in. As such, the API is designed to return a small number of results (10 by default) that are the best matches for the query string. The API is not designed to return all possible matches for a query string, and as such, it is not recommended to use the API to drive a machine process to find the entity you are looking for.
+
 ## Development
 
 Create a virtual environment and install dependencies with poetry. We recommend using in-project virtual environments:

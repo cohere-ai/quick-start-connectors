@@ -13,9 +13,6 @@ class CrunchbaseApiClient:
         self.user_key = api_key
         self.search_limit = search_limit
 
-    def get_search_limit(self):
-        return self.search_limit
-
     def get(self, params={}):
         response = requests.get(self.API_URL, params=params)
 
