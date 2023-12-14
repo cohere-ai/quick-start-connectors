@@ -9,9 +9,9 @@ load_dotenv()
 
 # Set your Jira details here
 jira = Jira(
-    url=os.environ.get("JIRA_PRODUCT_URL"),
-    username=os.environ.get("JIRA_CLIENT_USER"),
-    password=os.environ.get("JIRA_CLIENT_PASS"),
+    url=os.environ.get("JIRA_ORG_DOMAIN"),
+    username=os.environ.get("JIRA_USER_EMAIL"),
+    password=os.environ.get("JIRA_API_TOKEN"),
 )
 project_key = os.environ.get("JIRA_ISSUE_KEY")
 
