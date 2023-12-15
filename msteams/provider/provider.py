@@ -16,13 +16,10 @@ def strip_html_tags(html_text):
 
 
 def serialize_results(results):
-    return [
-        {
+    serialized_results = []
+    for result in results:
+        data_to_append = {
             "id": str(result["id"]),
-            "title": str(
-                result["subject"]
-                or strip_html_tags(result["body"]["content"])[:30] + "..."
-            ),
             "text": strip_html_tags(result["body"]["content"]),
             "summary": str(result["summary"]),
             "url": str(
@@ -35,8 +32,12 @@ def serialize_results(results):
             "has_attachments": str(len(result["attachments"]) > 0),
             "date": str(result["createdDateTime"]),
         }
-        for result in results
-    ]
+        if "subject" in result:
+            data_to_append["title"] = str(result["subject"])
+
+        serialized_results.append(data_to_append)
+
+    return serialized_results
 
 
 def prepare_attachments_to_parse(results):

@@ -10,7 +10,7 @@ from flask import current_app as app
 logger = logging.getLogger(__name__)
 
 CACHE_LIMIT_BYTES = 20 * 1024 * 1024  # 20 MB to bytes
-
+TIMEOUT_SECONDS = 20
 unstructured = None
 
 
@@ -25,7 +25,9 @@ class UnstructuredRequestSession:
 
     def start_session(self):
         self.loop = asyncio.new_event_loop()
-        self.session = aiohttp.ClientSession(loop=self.loop)
+        # Create ClientTimeout object to apply timeout for every request in the session
+        client_timeout = aiohttp.ClientTimeout(total=TIMEOUT_SECONDS)
+        self.session = aiohttp.ClientSession(loop=self.loop, timeout=client_timeout)
 
     def close_loop(self):
         self.loop.stop()
