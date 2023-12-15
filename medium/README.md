@@ -36,13 +36,13 @@ This variable may contain a comma-separated list of entities to search for.
 The valid entities are `users`, `tags`, `posts`, `publications`, `lists`.
 If this variable is not set, defaults is `["posts", "publications"]`.
 
-## Optional Configuration
 ```
 MEDIUM_CONNECTOR_API_KEY
 ```
 
-This variable may contain the API key for the Cohere connector.
+This variable should contain the API key for the Cohere connector.
 
+## Optional Configuration
 ```
 MEDIUM_GRAPHQL_SEARCH_LIMIT
 ```
