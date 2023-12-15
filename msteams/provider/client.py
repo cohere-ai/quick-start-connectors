@@ -119,14 +119,16 @@ class MsTeamsClient:
     def _prepare_attachments(self, messages, results):
         attachments = []
         for message in messages:
-            if message is not None:
-                if "attachments" in message:
-                    for attachment in message["attachments"]:
-                        attachment["downloadUrl"] = None
-                        if attachment["contentType"] == "reference":
-                            if "contentUrl" in attachment:
-                                attachments.append(attachment)
-                results.append(message)
+            if message is None:
+                continue
+            for attachment in message.get("attachments", []):
+                attachment["downloadUrl"] = None
+                if (
+                    attachment["contentType"] == "reference"
+                    and "contentUrl" in attachment
+                ):
+                    attachments.append(attachment)
+            results.append(message)
         if len(attachments) > 0:
             self.loop.run_until_complete(
                 self._gather_downloadable_attachments(attachments)
