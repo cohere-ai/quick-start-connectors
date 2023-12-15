@@ -27,8 +27,8 @@ permissions must be allowed for MS Graph API:
 - `offline_access`
 
 
-### App-only
-To use app-only authentication, set the following environment variables:
+### Service Authentication
+To use service to service authentication, set the following environment variables:
 
 - `MSTEAMS_GRAPH_AUTH_TYPE` to `application`
 - `MSTEAMS_GRAPH_TENANT_ID`
