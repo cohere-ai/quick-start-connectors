@@ -42,6 +42,7 @@ MEDIUM_CONNECTOR_API_KEY
 
 This variable should contain the API key for the Cohere connector.
 
+## Optional Configuration
 ```
 MEDIUM_GRAPHQL_SEARCH_LIMIT
 ```

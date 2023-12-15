@@ -1323,13 +1323,21 @@ class MediumApiClient:
 
 def get_client() -> MediumApiClient:
     global client
-    assert (api_token := app.config.get("API_TOKEN")), "MEDIUM_API_TOKEN must be set"
-
+    api_token = None
     search_api = app.config.get("SEARCH_API_TYPE", "graphql")
+    if search_api not in ["graphql", "api"]:
+        raise UpstreamProviderError(
+            "SEARCH_API_TYPE environment variable should be either 'graphql' or 'api'."
+        )
     searchable_entities = app.config.get("GRAPHQL_ENTITIES", ["posts", "publications"])
     search_limit = app.config.get("SEARCH_LIMIT", 10)
     use_graph_ql = search_api == "graphql"
-
+    if not use_graph_ql:
+        api_token = app.config.get("API_TOKEN", None)
+        if not api_token:
+            raise UpstreamProviderError(
+                "Medium API token is not set. Please set MEDIUM_API_TOKEN environment variable."
+            )
     if not client:
         client = MediumApiClient(
             api_token, use_graph_ql, searchable_entities, search_limit
