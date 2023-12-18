@@ -54,8 +54,7 @@ services:
       etcd:
         condition: service_started
     environment:
-      - MILVUS_CLUSTER_HOST=standalone
-      - MILVUS_CLUSTER_PORT=19530
+      - MILVUS_CLUSTER_URI=http://standalone:19530
       - MILVUS_COLLECTION=bbq
     volumes:
       - ./dev/bbq_embeddings.json:/bbq_embeddings.json
