@@ -6,8 +6,6 @@ from .client import get_client
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_SEARCH_LIMIT = 10
-
 
 def serialize_result(issue):
     data = {}
@@ -33,10 +31,7 @@ def serialize_result(issue):
 def search(query):
     client = get_client()
 
-    issues = client.jql(
-        'text ~ "' + query + '"',
-        limit=app.config.get("SEARCH_LIMIT", DEFAULT_SEARCH_LIMIT),
-    )["issues"]
+    issues = client.search(query)
 
     results = []
     for issue in issues:
