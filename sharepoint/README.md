@@ -6,60 +6,91 @@ It uses Microsoft Graph API run the search query and return matching files.
 
 # Limitations
 
-The Sharepoint connector currently allows for full-text search based on file contents stored within your Sharepoint instance, it is important to note however that only List items and Drive items are currently returned by the search API.
+The Sharepoint connector allows for full-text search over all files in your Sharepoint instance. It supports two types of authentication:
+
+- Application auth: Allows searching all files that the app has access to.
+- Delegated auth (OAuth): Allows searching files that the authenticated user has access to (recommended).
 
 Important: Sharepoint's default interval for content crawling is set to every 15 minutes. Expect a delay between uploading new files and being able to search for them.
 
 ## Configuration
 
+1. Register a new Microsoft App
+
 Running this connector requires access to Microsoft 365. For development purposes,
 you can register for the Microsoft 365 developer program, which will grant temporary
 access to a Microsoft 365.
 
-For the connector to work, you must register the application. To do this, go to the
+For the connector to work, you must create a new application. To do this, go to the
 Microsoft Entra admin center:
 
 https://entra.microsoft.com/
 
 Navigate to Applications > App registrations > New registration option.
 
-Select "Web" as the platform, and ensure you add a redirect URL, even if it is optional.
-The redirect URL is required for the admin consent step to work. This connector does not
-have a redirect page implemented, but you can use http://localhost/ as the redirect URL.
+Select "Web" as the platform, and add a redirect URI as needed. For App auth, you can set the URI to the server you're hosting the connector on. For Delegated auth, set the URI to `https://api.cohere.com/v1/connectors/oauth/token`.
 
-On the app registration page for the app you have created, go to API permissions, and
-grant permissions. For development purposes, you can grant:
+Next, we will configure your App permissions (this requires Admin access on Entra). Head under your app's API permissions page and select Add a permission > Microsoft Graph. From here, select either Application of Delegated permissions as required, and check the following permissions:
 
-- SharePointTenantSettings.Read.All
-- SharePointTenantSettings.ReadWrite.All
-- Sites.FullControl.All
-- Sites.Manage.All
-- Sites.Read.All
-- Sites.ReadWrite.All
-- Sites.Selected
+- `offline_access` (only if using Delegated)
+- `Application.Read.All`
+- `Files.ReadWrite.All` (MSFT requires this to enable search, though this connector will never write anything)
 
-You will then have a create a client secret for the application. Then take the app's credentials (:code:`SHAREPOINT_GRAPH_TENANT_ID`, :code:`SHAREPOINT_GRAPH_CLIENT_ID` and :code:`SHAREPOINT_GRAPH_CLIENT_SECRET`) and copy them into a `.env` file using the `.env-template` as the base template.
+Go back to API permissions, and as an Admin, select Grant admin consent for MSFT.
 
-To process the files in a readable format by Coral, the Sharepoint connector leverages
-In order to process OneDrive files, it is necessary to provide credentials for Unstructured:
-
-- `SHAREPOINT_UNSTRUCTURED_BASE_URL`
-- `SHAREPOINT_UNSTRUCTURED_API_KEY`
-
-To use the hosted Unstructured API, you must provide an API key and set `SHAREPOINT_GRAPH_UNSTRUCTURED_BASE_URL`
-too. A trailing slash should not be included (i.e. `http://localhost:8000` or `https://api.unstructured.io`).
-
-You can configure which file types will be processed by Unstructured with the `SHAREPOINT_PASSTHROUGH_FILE_TYPES` environment variable. This should be a comma-separated list of strings. Any files matching the types defined will skip Unstructured.
+Then, head to Certificates & Secrets and create a new client secret.
 
 The above environment variables can be read from a .env file. See `.env-template` for an example `.env` file.
 
-After the client has been created, you will need to grant admin consent to the client. One
-way to do this is by going to the following URL:
+2. Authentication
 
-https://login.microsoftonline.com/{site_id}/adminconsent?client_id={client_id}&redirect_uri=http://localhost/
+We will now cover the two types of authentication supported by this connector. To use either type of authentication, specify the `SHAREPOINT_AUTH_TYPE` environment variable as either `application` for App auth, or `user` for Delegated auth.
 
-You must replace `{site_id}` and `{client_id}` with the appropriate values. The `redirect_uri`
-must match the value that was configured when creating the client in Microsoft Entra.
+### Application authentication
+
+For application authentication, you will need to setup the following environment variables in a `.env` file:
+
+```bash
+SHAREPOINT_AUTH_TYPE=application
+SHAREPOINT_CLIENT_ID=<obtainable from app details>
+SHAREPOINT_CLIENT_SECRET=<obtainable from app credentials>
+SHAREPOINT_TENANT_ID=<obtainable from app details>
+```
+
+### Delegated authentication
+
+For delegated authentication, you will need to add the following environment variable in a `.env` file:
+
+```bash
+SHAREPOINT_AUTH_TYPE=user
+```
+
+Other than that, no configuration is needed. When registering the connector you will specify all the details required for Cohere to handle the authentication steps (details to follow).
+
+To configure delegated user OAuth, make sure the app you registered in Step 1 has a Redirect URI to `https://api.cohere.com/v1/connectors/oauth/token`.
+
+Next, register the connector with Cohere's API using the following configuration.
+
+```bash
+ curl  -X POST \
+   'https://api.cohere.ai/v1/connectors' \
+   --header 'Accept: */*' \
+   --header 'Authorization: Bearer {COHERE-API-KEY}' \
+   --header 'Content-Type: application/json' \
+   --data-raw '{
+   "name": "Sharepoint with OAuth",
+   "url": "{YOUR_CONNECTOR-URL}",
+   "oauth": {
+     "client_id": "{Your Microsoft App CLIENT-ID}",
+     "client_secret": "{Your Microsoft App CLIENT-SECRET}",
+     "authorize_url": "https://login.microsoftonline.com/{Your Microsoft App TENANT-ID}/oauth2/v2.0/authorize",
+     "token_url": "https://login.microsoftonline.com/{Your Microsoft App TENANT-ID}/oauth2/v2.0/token",
+     "scope": ".default offline_access"
+   }
+ }'
+```
+
+Once properly registered, whenever a search request is made Cohere will take care of authorizing the current user and passing the correct access tokens in the request headers.
 
 ### Provision Unstructured
 
@@ -67,11 +98,16 @@ Processing the files found on OneDrive requires the Unstructured API. The Unstru
 a commercially backed, Open Source project. It is available as a hosted API, Docker image, and as a
 Python package, which can be manually set up.
 
-By default, this connector uses the hosted `https://api.unstructured.io` API. You must provide an API key by registering an account and obtaining an API key [here](https://unstructured.io/api-key).
+To configure Unstructured, setup these two environment variables:
 
-Alternatively, you can use the API by hosting it yourself with their provided Docker image. If you've used Docker before, the setup is relatively straightforward. Please follow the instructions for setting up the Docker image in the Unstructured [documentation](https://unstructured-io.github.io/unstructured/api.html#using-docker-images).
+```bash
+SHAREPOINT_UNSTRUCTURED_BASE_URL=https://api.unstructured.io
+SHAREPOINT_UNSTRUCTURED_API_KEY=(optional)
+```
 
-The final option is to set Unstructured up locally, outside of Docker. This is a complex option that is not recommended, as it involves installing many dependencies outside of Python.
+By default, this connector uses the hosted `https://api.unstructured.io` API that requires an API key obtainable by registering an account [here](https://unstructured.io/api-key).
+
+Alternatively, you can use the API by hosting it yourself with their provided Docker image. If you've used Docker before, the setup is relatively straightforward. Please follow the instructions for setting up the Docker image in the Unstructured [documentation](https://unstructured-io.github.io/unstructured/api.html#using-docker-images). With this self-hosted option, no API key is required.
 
 ### Run Flask Server
 
