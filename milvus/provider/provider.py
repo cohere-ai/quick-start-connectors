@@ -18,20 +18,18 @@ def serialize_results(data, mappings={}):
     Returns:
     list: A serialized list of dictionaries with transformed keys and string-converted values.
     """
-    serialized_data = list(
-        map(
-            lambda item: {
-                k
-                if k not in mappings
-                else mappings[k]: ", ".join(str(vl) for vl in v)
-                if isinstance(v, list)
-                else str(v)
-                for k, v in item.items()
-            },
-            data,
-        )
-    )
-    return serialized_data
+
+    def serialize_item(item):
+        serialized_item = {}
+        for k, v in item.items():
+            key = k if k not in mappings else mappings[k]
+            serialized_item[key] = (
+                str(v) if not isinstance(v, list) else ", ".join(str(vl) for vl in v)
+            )
+
+        return serialized_item
+
+    return list(map(serialize_item, data))
 
 
 def search(query):

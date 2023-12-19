@@ -2,13 +2,13 @@
 
 This package is a utility for connecting Cohere to a Milvus database.
 
-It relies on the `pymilvus` package for managing establishing the connection and performing vector searches. 
+It relies on the `pymilvus` package for establishing/managing the connection and performing vector searches. 
 This implementation also uses Cohere's embedding API to generate search vectors.
 
 ## Limitations
 
 Currently, the search is performed by embedding the search query with Cohere's embedding API.
-So the Milvus DB vectors embeddings should be generated using Cohere embed API.
+So the Milvus DB vectors embeddings should be generated using the Cohere embed API.
 
 ## Configuration
 

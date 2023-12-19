@@ -1,7 +1,8 @@
 import logging
 from flask import current_app as app
 import cohere
-from pymilvus import connections, Collection
+from pymilvus import connections, Collection, MilvusException
+from . import UpstreamProviderError
 
 logger = logging.getLogger(__name__)
 
@@ -17,23 +18,27 @@ class MilvusConnectorClient:
         cluster_uri,
         collection_name,
         vector_field,
+        search_limit,
         user=None,
         password=None,
         api_key=None,
     ):
-        if api_key is not None:
-            connections.connect(
-                alias=self.DEFAULT_ALIAS, uri=cluster_uri, token=api_key
-            )
-        else:
-            connections.connect(
-                alias=self.DEFAULT_ALIAS, uri=cluster_uri, token=f"{user}:{password}"
-            )
+        try:
+            if api_key is not None:
+                connections.connect(
+                    alias=self.DEFAULT_ALIAS, uri=cluster_uri, token=api_key
+                )
+            else:
+                connections.connect(
+                    alias=self.DEFAULT_ALIAS,
+                    uri=cluster_uri,
+                    token=f"{user}:{password}",
+                )
+        except MilvusException as e:
+            raise UpstreamProviderError(f"Milvus connection error:{e.message}")
+
         self.collection = Collection(name=collection_name)
         self.vector_field = vector_field
-        self.search_limit = self.DEFAULT_SEARCH_LIMIT
-
-    def set_search_limit(self, search_limit):
         self.search_limit = search_limit
 
     def get_search_fields(self):
@@ -88,9 +93,14 @@ def get_milvus_client():
     search_limit = app.config.get("SEARCH_LIMIT", 100)
 
     milvus_client = MilvusConnectorClient(
-        cluster_uri, collection_name, vector_field, user, password, api_key
+        cluster_uri,
+        collection_name,
+        vector_field,
+        search_limit,
+        user,
+        password,
+        api_key,
     )
-    milvus_client.set_search_limit(search_limit)
 
     return milvus_client
 
