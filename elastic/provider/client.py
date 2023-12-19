@@ -1,6 +1,8 @@
 from elasticsearch import Elasticsearch
 from flask import current_app as app
 
+from . import UpstreamProviderError
+
 client = None
 
 
@@ -34,6 +36,11 @@ class ElasticsearchClient:
         response = self.client.search(
             index=self.index, body=es_query_body, size=self.search_limit
         )
+
+        if response.get("hits", {}).get("hits") is None:
+            raise UpstreamProviderError(
+                "Error while searching Elasticsearch with " f"query: '{query}'."
+            )
 
         return response["hits"]["hits"]
 
