@@ -102,12 +102,3 @@ The Flask API will be bound to :code:`localhost:5000`.
 Alternatively, load up the Swagger UI and try out the API from a browser: http://localhost:5000/ui/
 
 
-Access token: eyJtaXJvLm9yaWdpbiI6ImV1MDEifQ_YzooxKlT_fDcq4FGYBwNPUCRjKU
-Refresh token: eyJtaXJvLm9yaWdpbiI6ImV1MDEifQ_QkacN46_MXcsLHPml441qh_CEXk
-
-
-
-Your app has been installed
-Access token: eyJtaXJvLm9yaWdpbiI6ImV1MDEifQ_pzszF4PUkKBNFgAwfcYmkyi_g4Y
-You only need tokens if you want to use Miro REST API
-Don't share tokens with users or anyone else
