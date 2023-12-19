@@ -8,10 +8,15 @@ Currently this connector will perform full-text search, but only for a single in
 
 ## Configuration
 
-You will need to configure this connector with the credentials and path necessary to connect to your Elasticsearch instance.
-This connector is currently only configured to search a single index of your ES cluster, you will need to point to it by specifying your `ELASTIC_CLOUD_ID`, `ELASTIC_URL`, and `ELASTIC_INDEX`.
+You will need to configure this connector with the connection details and authentication credentials to your Elasticsearch instance. These will need to be set in your environment variables, we recommend creating a `.env` file that you can base off the `.env-template`.
 
-Then, to authorize your connection you will either require an `ELASTIC_API_KEY` _or_ both `ELASTIC_USER` and `ELASTIC_PASS`.
+1. To configure your connection details, _either_ `ELASTIC_CLOUD_ID` or `ELASTIC_URL` need to be provided. Then, you will need to specify the `ELASTIC_INDEX` to query.
+
+2. To authorize your connection, supply _either_ `ELASTICS_API_KEY` or both `ELASTIC_USER` and `ELASTIC_PASS`.
+
+Optionally, you can set the `ELASTIC_SEARCH_LIMIT` parameter to determine the maximum number of results returned by a search.
+
+Finally, to protect this connector from abuse, the `ELASTIC_CONNECTOR_API_KEY` environment variable must be set to a secure value that will be used for this connector's own bearer token authentication.
 
 ## Development
 
