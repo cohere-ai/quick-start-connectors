@@ -1,62 +1,50 @@
-from flask import current_app as app
 import logging
 
-import cohere
-from pymilvus import connections, Collection
-
+from flask import current_app as app
+from .client import get_cohere_client, get_milvus_client
 
 logger = logging.getLogger(__name__)
-milvus_connection = None
-cohere_client = None
+
+
+def serialize_results(data, mappings={}):
+    """
+    Serialize a list of dictionaries by transforming keys based on provided mappings
+    and converting values to strings.
+
+    Parameters:
+    - data (list): A list of dictionaries to be serialized.
+    - mappings (dict): A dictionary specifying key mappings for transformation.
+
+    Returns:
+    list: A serialized list of dictionaries with transformed keys and string-converted values.
+    """
+
+    def serialize_item(item):
+        serialized_item = {}
+        for k, v in item.items():
+            key = k if k not in mappings else mappings[k]
+            serialized_item[key] = (
+                str(v) if not isinstance(v, list) else ", ".join(str(vl) for vl in v)
+            )
+
+        return serialized_item
+
+    return list(map(serialize_item, data))
 
 
 def search(query):
-    global milvus_connection
-    global cohere_client
+    cohere_client = get_cohere_client()
+    milvus_client = get_milvus_client()
 
-    if not cohere_client:
-        assert (
-            apikey := app.config.get("COHERE_APIKEY")
-        ), "MILVUS_COHERE_APIKEY env var must be set"
-        cohere_client = cohere.Client(apikey)
-    if not milvus_connection:
-        milvus_connection = connections.connect(
-            alias="default",
-            host=app.config["CLUSTER_HOST"],
-            port=app.config["CLUSTER_PORT"],
-        )
+    xq = cohere_client.get_embeddings(query)
 
-    # Since we need a vector in order to query Milvus, we'll use the Cohere API to generate an embedding.
-    # Naturally, you should use the same embedding model that you used to generate the vectors for the original data.
-    xq = cohere_client.embed(
-        [query],
-        model=app.config["COHERE_EMBED_MODEL"],
-    ).embeddings
-
-    collection = Collection(name=app.config["COLLECTION"])
-    collection.load()
-
-    top_k = 10
-    params = {"metric_type": "L2", "params": {"nprobe": 10}}
-    output_fields = [
-        field.name
-        for field in collection.schema.fields
-        if field.name != app.config["VECTOR_FIELD"]
-    ]
-
-    search_results = collection.search(
-        xq,
-        anns_field=app.config["VECTOR_FIELD"],
-        param=params,
-        limit=top_k,
-        output_fields=output_fields,
-    )
-
-    connections.remove_connection(alias="default")
+    output_fields = milvus_client.get_search_fields()
+    search_results = milvus_client.search(xq)
+    milvus_client.close_connection()
 
     results = [
         {field: result.entity.get(field) for field in output_fields}
         for result in search_results[0]
     ]
-
-    return results
+    mapping = app.config.get("FIELDS_MAPPING", {})
+    return serialize_results(results, mapping)
