@@ -24,7 +24,7 @@ customize the value to restrict the search to certain repositories using the Git
 GITHUB_QUERY_TEMPLATE="{query} in:file language:js repo:jquery/jquery"
 ```
 
-The above query template would perform the search in Javascript files in the jquery repo.
+For example, the above query template would perform the search in Javascript files in the jquery repo.
 
 The `GITHUB_RESULTS_PER_PAGE` value defaults to 5 in this search connector, although the GitHub default is 30. The
 maximum number of results per page supported by GitHub is 100. A separate API call is required for each result,
