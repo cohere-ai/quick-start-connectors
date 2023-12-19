@@ -14,6 +14,8 @@ def search(query) -> list[dict[str, Any]]:
     results = []
     for item in search_results:
         result = serialize_result(github_client, item)
+
+        # Result can be None when content cannot be fetched and/or decoded
         if result:
             results.append(result)
 
