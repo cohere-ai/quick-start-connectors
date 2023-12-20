@@ -30,16 +30,12 @@ class MiroClient:
             message = response.text or f"Error: HTTP {response.status_code}"
             raise UpstreamProviderError(message)
 
-        results = response.json()["data"]
-
-        return results
+        return response.json()["data"]
 
 
 def get_client():
-    access_token = app.config.get("ACCESS_TOKEN", None)
+    access_token = app.config.get("ACCESS_TOKEN", get_access_token())
     limit = app.config.get("LIMIT", DEFAULT_LIMIT)
-    if not access_token:
-        access_token = get_access_token()
     if not access_token:
         raise UpstreamProviderError("No access token provided")
     client = MiroClient(access_token, limit)

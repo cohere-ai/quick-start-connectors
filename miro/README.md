@@ -10,14 +10,14 @@ The Miro connector currently allows full-text search of a board's title and desc
 
 To configure this connector you will have to either create a new Miro app, see [here](https://developers.miro.com/docs/rest-api-build-your-first-hello-world-app#step-1-create-your-app-in-miro), or configuring an existing app.
 
-Your app will require at the least the `board:read` permission to allow searching your boards, once that is done you can save and install the app,
-a message should notify you that the app was successfully installed, and give you an access token. Use this token for the `MIRO_ACCESS_TOKEN` environment variable.
+Your app will require at the least the `board:read` permission to allow searching your boards, once that is done you can save and install the app.
+A message should notify you that the app was successfully installed, and give you an access token. Use this token for the `MIRO_ACCESS_TOKEN` environment variable.
 The `MIRO_ACCESS_TOKEN` environment variable must be set if you didn't select the "Expire user authorization token" checkbox during app creation.
-If you selected that checkbox, you will need to use the Oauth flow.
+If you selected that checkbox, you will need to use the OAuth flow.
 
-### Oauth flow
-The OAuth flow should occur outside of the Connector and Cohere's API will forward the user's access token
-to this connector through the `Authorization` header.
+### OAuth flow
+The OAuth flow should occur outside of the Connector by calling Cohere's API. Once authorized,
+Cohere's API will forward the user's access token to this connector through the `Authorization` header.
 
 To configure OAuth, follow the same steps to create a Miro App and select the "Expire user authorization token" checkbox. 
 You will also need to register a redirect URI on that app to `https://api.cohere.com/v1/connectors/oauth/token`.
@@ -44,9 +44,8 @@ curl  -X POST \
 ```
 No more configuration is needed here and after successfully registration, 
 Cohere will take care of OAuth steps including passing in the correct headers to your connector.
-
-
-
+If you are not using Coral/Playground, you will have to complete the authorization flow by navigating to the URL returned at 
+`https://api.cohere.ai/v1/connectors/{CONNECTOR-ID}/oauth/authorize`.
 
 
 ## Optional Configuration
