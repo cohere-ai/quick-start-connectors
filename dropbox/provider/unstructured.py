@@ -1,7 +1,7 @@
+import sys
 import asyncio
 import aiohttp
 import logging
-import sys
 import functools
 from collections import OrderedDict
 from flask import current_app as app
@@ -17,7 +17,7 @@ unstructured = None
 class UnstructuredRequestSession:
     def __init__(self, unstructured_base_url, api_key):
         self.get_content_url = f"{unstructured_base_url}/general/v0/general"
-        self.headers = {"unstructured-api-key": api_key}
+        self.api_key = api_key
         # Manually cache because functools.lru_cache does not support async methods
         self.cache = OrderedDict()
         self.start_session()
@@ -66,9 +66,12 @@ class UnstructuredRequestSession:
         data = aiohttp.FormData()
         data.add_field("files", file_data, filename=file_name)
 
+        # API key optional if self-hosted
+        headers = {} if self.api_key is None else {"unstructured-api-key": self.api_key}
+
         async with self.session.post(
             self.get_content_url,
-            headers=self.headers,
+            headers=headers,
             data=data,
         ) as response:
             content = await response.json()
@@ -104,13 +107,10 @@ def get_unstructured_client():
     if unstructured is not None:
         return unstructured
 
-    # Fetch environment variables
     assert (
         unstructured_base_url := app.config.get("UNSTRUCTURED_BASE_URL")
-    ), "SHAREPOINT_UNSTRUCTURED_BASE_URL must be set"
-    assert (
-        api_key := app.config.get("UNSTRUCTURED_API_KEY")
-    ), "SHAREPOINT_UNSTRUCTURED_API_KEY must be set"
+    ), "DROPBOX_UNSTRUCTURED_BASE_URL must be set"
+    api_key = app.config.get("UNSTRUCTURED_API_KEY", None)
 
     unstructured = UnstructuredRequestSession(unstructured_base_url, api_key)
 
