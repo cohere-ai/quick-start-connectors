@@ -8,7 +8,8 @@ load_dotenv()
 
 
 def create_post(row):
-    url = "http://localhost:8000/?rest_route=/wp/v2/posts"
+    wp_url = os.environ.get("WORDPRESS_URL")
+    url = f"{wp_url}/?rest_route=/wp/v2/posts"
     headers = {"Content-Type": "application/json"}
     content = f"Brand: {row['Brand']}\nColor: {row['Color']}\n\n{row['Features']}\n\n{row['Description']}"
 
