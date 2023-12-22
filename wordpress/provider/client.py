@@ -8,6 +8,8 @@ from . import UpstreamProviderError
 
 DEFAULT_SEARCH_LIMIT = 20
 
+client = None
+
 
 class WordpressClient:
     SEARCH_ENDPOINT = "/?rest_route=/wp/v2/search"
@@ -20,7 +22,6 @@ class WordpressClient:
         self.search_limit = search_limit
         self.session = None
         self.loop = None
-        self._start_session()
 
     def _close_loop(self):
         self.loop.stop()
@@ -43,6 +44,7 @@ class WordpressClient:
         async with self.session.get(
             url,
             auth=aiohttp.BasicAuth(self.username, self.password),
+            params={"_embed": 1},
         ) as response:
             if not response.ok:
                 return None
@@ -50,6 +52,9 @@ class WordpressClient:
 
             soup = BeautifulSoup(content["content"]["rendered"], "html.parser")
             post = {
+                "post_id": str(content["id"]),
+                "post_date": content["date"],
+                "created_by": content["_embedded"]["author"][0]["name"],
                 "title": content["title"]["rendered"],
                 "text": soup.get_text(),
                 "url": content["link"],
@@ -57,7 +62,8 @@ class WordpressClient:
             return post
 
     def _process_posts(self, posts):
-        return self.loop.run_until_complete(self._gather_posts(posts))
+        results = self.loop.run_until_complete(self._gather_posts(posts))
+        return [result for result in results if result is not None]
 
     def search(self, query):
         params = {"search": query, "per_page": self.search_limit}
@@ -67,6 +73,7 @@ class WordpressClient:
             raise UpstreamProviderError(
                 f"Error while searching Wordpress: {response.text}"
             )
+        self._start_session()
         results = self._process_posts(response.json())
         self.loop.run_until_complete(self._close_session())
         self._close_loop()
@@ -74,11 +81,17 @@ class WordpressClient:
 
 
 def get_client():
-    assert (base_url := app.config.get("URL")), "WORDPRESS_URL must be set"
-    assert (username := app.config.get("USERNAME")), "WORDPRESS_USERNAME must be set"
-    assert (password := app.config.get("PASSWORD")), "WORDPRESS_PASSWORD must be set"
-    search_limit = app.config.get("SEARCH_LIMIT", DEFAULT_SEARCH_LIMIT)
+    global client
+    if not client:
+        assert (base_url := app.config.get("URL")), "WORDPRESS_URL must be set"
+        assert (
+            username := app.config.get("USERNAME")
+        ), "WORDPRESS_USERNAME must be set"
+        assert (
+            password := app.config.get("PASSWORD")
+        ), "WORDPRESS_PASSWORD must be set"
+        search_limit = app.config.get("SEARCH_LIMIT", DEFAULT_SEARCH_LIMIT)
 
-    client = WordpressClient(base_url, username, password, search_limit)
+        client = WordpressClient(base_url, username, password, search_limit)
 
     return client

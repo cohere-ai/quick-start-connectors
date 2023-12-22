@@ -4,11 +4,21 @@ Connects Cohere to Wordpress.
 
 ## Configuration
 
-This connector requires that the environment variables `WORDPRESS_USERNAME`, `WORDPRESS_PASSWORD` be set in order to run. These variables can optionally be put into a `.env` file for development.
+This connector requires that the environment variables `WORDPRESS_URL`,`WORDPRESS_USERNAME`, `WORDPRESS_PASSWORD` be set in order to run.
+These variables can optionally be put into a `.env` file for development.
 A `.env-template` file is provided as a reference.
 
-`MSTEAMS_CONNECTOR_API_KEY`
-  This variable should contain the API key for the connector.
+`WORDPRESS_URL`
+This variable should contain the URL of the Wordpress instance to connect to.
+
+`WORDPRESS_USERNAME`
+This variable should contain the username of the Wordpress user to connect as.
+
+`WORDPRESS_PASSWORD`
+To set this variable go to your user settings and generate an Application Password for your account.
+
+`WORDPRESS_CONNECTOR_API_KEY`
+This variable should contain the API key for the connector.
 
 ## Optional Configuration
 ```
