@@ -8,6 +8,8 @@ AUTHORIZATION_HEADER = "Authorization"
 BEARER_PREFIX = "Bearer "
 DEFAULT_LIMIT = 20
 
+client = None
+
 
 class ZendeskClient:
     def __init__(self, email, domain, access_token, limit):
@@ -29,11 +31,13 @@ class ZendeskClient:
 
 
 def get_client():
-    assert (email := app.config.get("EMAIL")), "ZENDESK_EMAIL must be set"
-    assert (domain := app.config.get("DOMAIN")), "ZENDESK_DOMAIN must be set"
-    assert (token := app.config.get("API_TOKEN")), "ZENDESK_API_TOKEN must be set"
-    limit = app.config.get("SEARCH_LIMIT", DEFAULT_LIMIT)
+    global client
+    if client is None:
+        assert (email := app.config.get("EMAIL")), "ZENDESK_EMAIL must be set"
+        assert (domain := app.config.get("DOMAIN")), "ZENDESK_DOMAIN must be set"
+        assert (token := app.config.get("API_TOKEN")), "ZENDESK_API_TOKEN must be set"
+        limit = app.config.get("SEARCH_LIMIT", DEFAULT_LIMIT)
 
-    client = ZendeskClient(email, domain, token, limit)
+        client = ZendeskClient(email, domain, token, limit)
 
     return client
