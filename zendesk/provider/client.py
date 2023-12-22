@@ -4,8 +4,6 @@ from flask import current_app as app
 
 from . import UpstreamProviderError
 
-AUTHORIZATION_HEADER = "Authorization"
-BEARER_PREFIX = "Bearer "
 DEFAULT_LIMIT = 20
 
 client = None
