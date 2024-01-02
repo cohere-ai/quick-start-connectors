@@ -1,7 +1,10 @@
 import requests
 from flask import current_app as app
+from functools import lru_cache
 
 from . import UpstreamProviderError
+
+CACHE_SIZE = 256
 
 client = None
 
@@ -12,6 +15,7 @@ class HackerNewsClient:
     def __init__(self, search_limit):
         self.search_limit = search_limit
 
+    @lru_cache(maxsize=CACHE_SIZE)
     def search(self, query):
         url = f"{self.BASE_URL}/search"
         params = {
@@ -30,6 +34,7 @@ class HackerNewsClient:
 
         return response.json()["hits"]
 
+    @lru_cache(maxsize=CACHE_SIZE)
     def get_item(self, item_id):
         url = f"{self.BASE_URL}/items/{item_id}"
         response = requests.get(
