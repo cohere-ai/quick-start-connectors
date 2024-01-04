@@ -8,67 +8,27 @@ Snowflake does not offer full-text search. Instead, this connector uses SQL cons
 
 ## Configuration
 
-To use this connector you must have access to a Snowflake database. This connector does
-not install a local instance of Snowflake or load test data into it.
+To use this connector you must have access to a Snowflake database. For testing, this connector offers a development setup guide below.
 
-It requires the following environment variables:
+Once you have the dev setup ready, or if you have an existing Snowflake instance, you can create a `.env` based off the `.env-template` file.
 
-```
-SNOWFLAKE_USER
+Fill in these variables to setup your connection to Snowflake:
 
-This variable should contain the username for the Snowflake database.
-```
+- `SNOWFLAKE_USER`: User to access the DB
+- `SNOWFLAKE_PASSWORD`: Password associated with the above User
+- `SNOWFLAKE_ACCOUNT`: Snowflake Account, this should be visible in your URL and look like abcdefg-ab12345
+- `SNOWFLAKE_WAREHOUSE`: Warehouse
+- `SNOWFLAKE_DATABASE`: Database
+- `SNOWFLAKE_SCHEMA`: Schema
+- `SNOWFLAKE_TABLE`: Table you want to search
 
-```
-SNOWFLAKE_PASSWORD
+To configure the search functionality:
 
-This variable should contain the password for the Snowflake database.
-```
+- `SNOWFLAKE_SEARCH_FIELDS_MAPPING`: Contains a JSON object mapping Snowflake fields to Cohere fields, determines what the request response will look like. For example, a DB row containing {"id": 5, "description": "I am a row"} could be mapped to {"description": "text"}. This will return the description as the `text` key value for Coral to ingest. We recommend adding `text`, `title` and `url` (if exists) fields. Other document keys that are not present in the mapping will be returned as-is.
 
-```
-SNOWFLAKE_ACCOUNT
+- `SNOWFLAKE_SEARCH_LIMIT` (Optional): Configures the max amount of search results returned
 
-This variable should contain the account name for the Snowflake database.
-```
-
-```
-SNOWFLAKE_WAREHOUSE
-
-This variable should contain the warehouse name for the Snowflake database.
-```
-
-```
-SNOWFLAKE_DATABASE
-
-This variable should contain the database name for the Snowflake database.
-```
-
-```
-SNOWFLAKE_SCHEMA
-
-This variable should contain the schema name for the Snowflake database.
-```
-
-```
-SNOWFLAKE_TABLE
-
-This variable should contain the table name for the Snowflake database.
-```
-
-```
-SNOWFLAKE_SEARCH_FIELDS_MAPPING
-
-This variable should contain a JSON object mapping Cohere fields
-to Snowflake fields(key is Snowflake field which will be used for search
-and should be correct data field from table we search through,
-the value is Cohere field).
-```
-
-```
-SNOWFLAKE_CONNECTOR_API_KEY
-
-This variable should contain the API key for the Snowflake connector.
-```
+Finally, to configure Connector-level Bearer auth, you can set the `SNOWFLAKE_CONNECTOR_API_KEY`.
 
 ## Setting up Dev Environment and loading Test Data
 
