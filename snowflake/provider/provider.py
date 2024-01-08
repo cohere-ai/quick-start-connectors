@@ -1,15 +1,18 @@
 import logging
-from itertools import product
 from typing import Any
 
-import snowflake.connector
-from flask import current_app as app
-from snowflake.connector import DictCursor
-from snowflake.connector.errors import Error as SnowflakeError
+from .client import get_client
 
-from . import UpstreamProviderError
 
 logger = logging.getLogger(__name__)
+
+
+def search(query) -> list[dict[str, Any]]:
+    snowflake_client = get_client()
+
+    search_results = snowflake_client.search(query)
+
+    return serialize_results(search_results or [], snowflake_client.mappings)
 
 
 def serialize_results(data, mappings):
@@ -38,55 +41,3 @@ def serialize_results(data, mappings):
         )
     )
     return serialized_data
-
-
-def search(query) -> list[dict[str, Any]]:
-    assert (user := app.config.get("USER")), "SNOWFLAKE_USER must be set"
-    assert (password := app.config.get("PASSWORD")), "SNOWFLAKE_PASSWORD must be set"
-    assert (warehouse := app.config.get("WAREHOUSE")), "SNOWFLAKE_WAREHOUSE must be set"
-    assert (account := app.config.get("ACCOUNT")), "SNOWFLAKE_WAREHOUSE must be set"
-    assert (database := app.config.get("DATABASE")), "SNOWFLAKE_DATABASE must be set"
-    assert (schema := app.config.get("SCHEMA")), "SNOWFLAKE_SCHEMA must be set"
-    assert (table := app.config.get("TABLE")), "SNOWFLAKE_TABLE must be set"
-    assert (
-        mappings := app.config.get("SEARCH_FIELDS_MAPPING")
-    ), "SNOWFLAKE_SEARCH_FIELDS_MAPPING must be set"
-    assert (max_results := app.config.get("MAX_RESULTS", 10)), "MAX_RESULTS must be set"
-
-    if not query:
-        return []
-
-    search_fields = list(mappings.keys())
-
-    try:
-        connection = snowflake.connector.connect(
-            user=user,
-            password=password,
-            warehouse=warehouse,
-            account=account,
-            database=database,
-        )
-    except SnowflakeError as err:
-        raise UpstreamProviderError("Error connecting to Snowflake") from err
-
-    words = query.split(" ")
-
-    constraints = " or ".join(
-        map(lambda p: f"contains({p[0]}, %s)", product(search_fields, words))
-    )
-
-    connection.cursor().execute(f"USE DATABASE {database};")
-    query = f"""
-        SELECT
-        *
-        FROM
-        {schema}.{table}
-        WHERE {constraints}
-        LIMIT
-        {max_results};
-    """
-
-    cursor = connection.cursor(DictCursor)
-    cursor.execute(query, words * len(search_fields))
-
-    return serialize_results(cursor.fetchall() or [], mappings)
