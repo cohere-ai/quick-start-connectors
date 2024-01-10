@@ -1,4 +1,4 @@
-# Snowflake Quick StartConnector
+# Snowflake Quick Start Connector
 
 Connects Cohere to a Snowflake database.
 
