@@ -1,11 +1,13 @@
-# Freshdesk Connector
+# Freshdesk Quick Start Connector
 
-Connects Cohere to Freshdesk, the CRM.
+Connects Cohere to Freshdesk, the cloud-based customer service management tool.
+
+## Limitations
 
 ## Configuration
 
 To use this connector, you will need a Freshdesk support portal. From there, click your profile picture
-in the top-right corner, go to Profile Settings and click See API key. Use this value for the
+in the top-right corner, go to Profile Settings and click View API key. Use this value for the
 `FRESHDESK_API_KEY` environment variable.
 
 Now grab your domain name from your support portal's URL, this will look like `mycompany.freshdesk.com`.
