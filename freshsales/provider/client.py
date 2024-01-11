@@ -41,11 +41,11 @@ class FreshsalesClient:
         ]
         return ",".join(entities)
 
-    def _request(self, method, url, headers={}, params={}, raise_on_error=False):
+    def _get(self, url, params={}, raise_on_error=False):
         response = requests.request(
-            method,
+            "GET",
             url,
-            headers=headers,
+            headers=self.headers,
             params=params,
         )
 
@@ -66,10 +66,8 @@ class FreshsalesClient:
             "per_page": self.search_limit,
         }
 
-        return self._request(
-            "GET",
+        return self._get(
             search_url,
-            self.headers,
             params,
             True,
         )
@@ -78,10 +76,8 @@ class FreshsalesClient:
         url = f"{self.base_url}/contacts/{id}"
         params = {"include": ",".join(CONTACT_PARAMETERS)}
 
-        return self._request(
-            "GET",
+        return self._get(
             url,
-            self.headers,
             params,
         )
 
@@ -89,10 +85,8 @@ class FreshsalesClient:
         url = f"{self.base_url}/sales_accounts/{id}"
         params = {"include": ",".join(SALES_ACCOUNT_PARAMETERS)}
 
-        return self._request(
-            "GET",
+        return self._get(
             url,
-            self.headers,
             params,
         )
 
@@ -100,10 +94,8 @@ class FreshsalesClient:
         url = f"{self.base_url}/deals/{id}"
         params = {"include": ",".join(DEAL_PARAMETERS)}
 
-        return self._request(
-            "GET",
+        return self._get(
             url,
-            self.headers,
             params,
         )
 

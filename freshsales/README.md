@@ -1,4 +1,4 @@
-# Freshsales Quick StartConnector
+# Freshsales Quick Start Connector
 
 Connects Cohere to Freshsales, the sales CRM tool.
 
