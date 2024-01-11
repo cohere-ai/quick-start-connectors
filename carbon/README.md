@@ -1,6 +1,6 @@
 # Carbon Quick Start Connector
 
-Connects Cohere to Knowledge Owl, the planning and collaboration tool.
+Connects Cohere to Carbon.
 
 ## Configuration
 

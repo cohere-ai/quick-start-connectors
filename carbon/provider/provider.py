@@ -13,31 +13,20 @@ def search(query) -> list[dict[str, Any]]:
     search_results = carbon_client.search(query)
 
     results = []
-    for page in search_results:
-        results.append(serialize_search_result(page))
+    for result in search_results:
+        results.append(serialize_result(result))
 
     return results
 
 
-def serialize_search_result(result):
-    # Only return primitive types, Coral cannot parse arrays/sub-dictionaries
-    stripped_result = {
-        key: str(value)
-        for key, value in result.items()
-        if isinstance(value, (str, int, bool))
-    }
+def serialize_result(entry):
+    serialized_result = {}
 
-    if "name" in stripped_result:
-        stripped_result["title"] = stripped_result.pop("name")
+    for key, value in entry.items():
+        serialized_result[key] = (
+            str(value)
+            if not isinstance(value, list)
+            else ", ".join(str(vl) for vl in value)
+        )
 
-    if "summary" in stripped_result:
-        stripped_result["text"] = stripped_result.pop("summary")
-
-    # Both fields required to build URL manually
-    if all(key in stripped_result for key in ["project_id", "id"]):
-        knowledgeowl_client = get_client()
-        stripped_result[
-            "url"
-        ] = f"{knowledgeowl_client.article_base_url}/{stripped_result['project_id']}/aid/{stripped_result['id']}"
-
-    return stripped_result
+    return serialized_result

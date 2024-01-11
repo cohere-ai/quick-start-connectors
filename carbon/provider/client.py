@@ -11,12 +11,27 @@ class CarbonClient:
     DEFAULT_MEDIA_TYPE = "TEXT"
 
     def __init__(self, api_key, customer_id, embedding_model):
-        self.headers = {
-            "Content-Type": "application/json",
+        self.get_access_token_headers = {
             "authorization": f"Bearer {api_key}",
-            "customer-id": customer_id,
+            "customer-id": str(customer_id),
         }
         self.embedding_model = embedding_model
+
+    def get_access_token(self):
+        get_token_url = f"{self.BASE_URL}/auth/v1/access_token"
+
+        response = requests.get(get_token_url, headers=self.get_access_token_headers)
+
+        if response.status_code != 200:
+            message = (
+                response.text
+                or f"{response.status_code} response: Error generating access token, make sure your API key is valid."
+            )
+            raise UpstreamProviderError(message)
+
+        self.headers = {
+            "authorization": f"Token {response.json()['access_token']}",
+        }
 
     def search_articles(self, query):
         url = f"{self.BASE_URL}/embeddings"
@@ -51,5 +66,6 @@ def get_client():
         embedding_model = app.config.get("EMBEDDING_MODEL", "COHERE_MULTILINGUAL_V3")
 
         client = CarbonClient(api_key, customer_id, embedding_model)
+        client.get_access_token()
 
     return client
