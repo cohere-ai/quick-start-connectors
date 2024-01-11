@@ -65,7 +65,7 @@ This variable should be set to the locale of the search experience you want to u
 ```
 YEXT_V
 ```
-This variable should be set to the search version date in YYYYMMDD format. You can find this in the Yext UI under Search Experience >Test search.
+This variable should be set to the search version date in YYYYMMDD format. You can find this in the Yext UI under Search Experience > Test search.
 
 
 
@@ -80,19 +80,24 @@ This variable should be set to the version of the Yext API you want to use.
 The available versions are `STAGING` and `PRODUCTION` and the value should be set to `STAGING` for testing and `PRODUCTION` for production.
 The default value is `PRODUCTION`.
 
+
 ```
 YEXT_SEARCH_LIMIT
 ```
 This variable may contain a JSON object specifying the limit for each vertical. 
 Each key is a vertical key and the value for each of those keys is a number 1-50 that denotes the limit for that vertical. 
 If a vertical is not specified, the default limit is 10 for all verticals
-
+You can find more details about verticals in the [Yext documentation](https://hitchhikers.yext.com/tracks/search-backend/search130-vertical-level-config/01-verticals-overview/).
 ```
 YEXT_RESTRICT_VERTICALS
 ```
 This variable may contain a comma-separated list of verticals (e.g. "people,locations"). 
 If specified, only results from these verticals will be returned.
 By default, all verticals are returned.
+You can find more details about verticals in the [Yext documentation](https://hitchhikers.yext.com/tracks/search-backend/search130-vertical-level-config/01-verticals-overview/).
+
+```
+
 
 ```
 YEXT_FIELDS_MAPPING
