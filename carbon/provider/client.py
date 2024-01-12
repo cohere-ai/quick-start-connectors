@@ -33,9 +33,9 @@ class CarbonClient:
             "authorization": f"Token {response.json()['access_token']}",
         }
 
-    def search_articles(self, query):
+    def search(self, query):
         url = f"{self.BASE_URL}/embeddings"
-        data = {
+        payload = {
             "query": query,
             "media_type": self.DEFAULT_MEDIA_TYPE,
             "embedding_model": self.embedding_model,
@@ -44,8 +44,12 @@ class CarbonClient:
         response = requests.post(
             url,
             headers=self.headers,
-            data=data,
+            json=payload,
         )
+
+        import pdb
+
+        pdb.set_trace()
 
         if response.status_code != 200:
             raise UpstreamProviderError(
