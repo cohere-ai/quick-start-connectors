@@ -4,6 +4,8 @@ Connects Cohere to Freshdesk, the cloud-based customer service management tool.
 
 ## Limitations
 
+This connector uses Freshdesk's [Filter Tickets](https://developers.freshdesk.com/api/#filter_tickets) API, which does not have full-text search enabled for the subject or description of tickets. It uses strict matching on Ticket fields (see documentation for details).
+
 ## Configuration
 
 To use this connector, you will need a Freshdesk support portal. From there, click your profile picture
@@ -13,7 +15,7 @@ in the top-right corner, go to Profile Settings and click View API key. Use this
 Now grab your domain name from your support portal's URL, this will look like `mycompany.freshdesk.com`.
 Use this value for `FRESHDESK_DOMAIN_NAME`.
 
-Also, use the `FRESHDESK_TICKET_PARAMETER` value to determine which field the search match will be performed on.
+Also, use the `FRESHDESK_TICKET_PARAMETERS` value to determine which field(s) the match will be performed on.
 
 Finally, to protect this connector from abuse, the `FRESHDESK_CONNECTOR_API_KEY` environment variable must be set to a secure value that will be used for this connector's own bearer token authentication.
 
