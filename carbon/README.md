@@ -19,6 +19,10 @@ For the `COHERE_EMBEDDING_MODEL` variable, the following are valid options:
 
 This value will affect the search - see the (Limitations)[#limitations] section.
 
+To finish configuring the search functionality, add the `CARBON_FIELDS_MAPPING` variable to modify the behavior of the result serialization. The key refers to the Carbon document response and the value will be the modified key name returned by this connector.
+
+Finally, to protect this connector from abuse, the `CARBON_CONNECTOR_API_KEY` environment variable must be set to a secure value that will be used for this connector's own bearer token authentication.
+
 ## Development
 
 Create a virtual environment and install dependencies with poetry. We recommend using in-project virtual environments:

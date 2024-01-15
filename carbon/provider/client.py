@@ -11,12 +11,13 @@ class CarbonClient:
     DEFAULT_MEDIA_TYPE = "TEXT"
     DEFAULT_K = 100
 
-    def __init__(self, api_key, customer_id, embedding_model):
+    def __init__(self, api_key, customer_id, embedding_model, mappings):
         self.get_access_token_headers = {
             "authorization": f"Bearer {api_key}",
             "customer-id": str(customer_id),
         }
         self.embedding_model = embedding_model
+        self.mappings = mappings
 
     def get_access_token(self):
         get_token_url = f"{self.BASE_URL}/auth/v1/access_token"
@@ -71,8 +72,9 @@ def get_client():
             customer_id := app.config.get("CUSTOMER_ID")
         ), "CARBON_CUSTOMER_ID must be set"
         embedding_model = app.config.get("EMBEDDING_MODEL", "COHERE_MULTILINGUAL_V3")
+        mappings = app.config.get("FIELDS_MAPPING", {})
 
-        client = CarbonClient(api_key, customer_id, embedding_model)
+        client = CarbonClient(api_key, customer_id, embedding_model, mappings)
         client.get_access_token()
 
     return client
