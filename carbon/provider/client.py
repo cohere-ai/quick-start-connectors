@@ -9,6 +9,7 @@ client = None
 class CarbonClient:
     BASE_URL = "https://api.carbon.ai"
     DEFAULT_MEDIA_TYPE = "TEXT"
+    DEFAULT_K = 100
 
     def __init__(self, api_key, customer_id, embedding_model):
         self.get_access_token_headers = {
@@ -33,12 +34,13 @@ class CarbonClient:
             "authorization": f"Token {response.json()['access_token']}",
         }
 
-    def search(self, query):
+    def search(self, query, retry=True):
         url = f"{self.BASE_URL}/embeddings"
         payload = {
             "query": query,
             "media_type": self.DEFAULT_MEDIA_TYPE,
             "embedding_model": self.embedding_model,
+            "k": self.DEFAULT_K,
         }
 
         response = requests.post(
@@ -47,16 +49,17 @@ class CarbonClient:
             json=payload,
         )
 
-        import pdb
-
-        pdb.set_trace()
-
         if response.status_code != 200:
-            raise UpstreamProviderError(
-                f"Error during Carbon search with query: `{query}`."
-            )
+            # Unauthorized, retry fetching access token and search once
+            if response.status_code == 401 and retry:
+                self.get_access_token()
+                self.search(query, False)
+            else:
+                raise UpstreamProviderError(
+                    f"Error during Carbon search with query: `{query}`."
+                )
 
-        return response.json()
+        return response.json().get("documents", [])
 
 
 def get_client():

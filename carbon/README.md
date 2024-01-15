@@ -2,9 +2,22 @@
 
 Connects Cohere to Carbon.
 
+## Limitations
+
+This connector leverages Carbon's [Search API (see documentation)](https://docs.carbon.ai/api-reference/endpoint/embeddings/embeddings). Importantly, the search will only work for files uploaded with the embedding model you specified in the `CARBON_EMBEDDING_MODEL` environment variable. For example, if you have files with embeddings generated using the `OPENAI` model, a search with the `COHERE_MULTILINGUAL_V3` model will not find them. Ensure that you set the embedding variable to the correct one.
+
 ## Configuration
 
-To use this connector you will require a Knowledge Owl organization. Then, head to your Account > API and generate an API key. Cohere will only require the `GET` permissions. Use this value for the `KNOWLEDGEOWL_API_KEY` environment variable.
+To use this connector, create a `.env` variable based on the `.env-template`. You will need a Carbon API key and Customer ID. If you don't have an existing Customer ID, we recommend generating a UUID v4 value to use that will also need to be used to upload your files to Carbon. Use these for the `CARBON_API_KEY` and `CARBON_CUSTOMER_ID` values.
+
+For the `COHERE_EMBEDDING_MODEL` variable, the following are valid options:
+
+- `OPENAI`
+- `AZURE_OPENAI`
+- `COHERE_MULTILINGUAL_V3`
+- `VERTEX_MULTIMODAL`
+
+This value will affect the search - see the (Limitations)[#limitations] section.
 
 ## Development
 
