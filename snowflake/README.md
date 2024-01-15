@@ -1,82 +1,46 @@
-# Snowflake Connector
+# Snowflake Quick Start Connector
 
 Connects Cohere to a Snowflake database.
 
-Note: Snowflake does not have a fulltext search feature.
+## Limitations
+
+Snowflake does not offer full-text search. Instead, this connector uses SQL constraints to retrieve rows in your DB.
 
 ## Configuration
 
-To use this connector you must have access to a Snowflake database. This connector does
-not install a local instance of Snowflake or load test data into it.
+To use this connector you must have access to a Snowflake database. For testing, this connector offers a development setup guide below.
 
-It requires the following environment variables:
+Once you have the dev setup ready, or if you have an existing Snowflake instance, you can create a `.env` based off the `.env-template` file.
 
-```
-SNOWFLAKE_USER
+Fill in these variables to setup your connection to Snowflake:
 
-This variable should contain the username for the Snowflake database.
-```
+- `SNOWFLAKE_USER`: User to access the DB
+- `SNOWFLAKE_PASSWORD`: Password associated with the above User
+- `SNOWFLAKE_ACCOUNT`: Snowflake Account, this should be visible in your URL and look like abcdefg-ab12345
+- `SNOWFLAKE_WAREHOUSE`: Warehouse
+- `SNOWFLAKE_DATABASE`: Database
+- `SNOWFLAKE_SCHEMA`: Schema
+- `SNOWFLAKE_TABLE`: Table you want to search
 
-```
-SNOWFLAKE_PASSWORD
+To configure the search functionality:
 
-This variable should contain the password for the Snowflake database.
-```
+- `SNOWFLAKE_SEARCH_FIELDS_MAPPING`: Contains a JSON object mapping Snowflake fields to Cohere fields, determines what the request response will look like. For example, a DB row containing {"id": 5, "description": "I am a row"} could be mapped to {"description": "text"}. This will return the description as the `text` key value for Coral to ingest. We recommend adding `text`, `title` and `url` (if exists) fields. Other document keys that are not present in the mapping will be returned as-is.
 
-```
-SNOWFLAKE_ACCOUNT
+- `SNOWFLAKE_SEARCH_LIMIT` (Optional): Configures the max amount of search results returned
 
-This variable should contain the account name for the Snowflake database.
-```
+Finally, to configure Connector-level Bearer auth, you can set the `SNOWFLAKE_CONNECTOR_API_KEY`.
 
-```
-SNOWFLAKE_WAREHOUSE
+## Setting up Dev Environment and loading Test Data
 
-This variable should contain the warehouse name for the Snowflake database.
-```
+Snowflake provides a free [30-day trial](https://signup.snowflake.com/) that you can use to setup a local development environment. For our purposes, selecting the Standard Edition will suffice.
 
-```
-SNOWFLAKE_DATABASE
+Note that the default values in the `.env-template` file are based on the data in `dev/bbq.csv` being loaded into a Snowflake database named `bbq`, with a schema called `bbq`.
 
-This variable should contain the database name for the Snowflake database.
-```
+To load this data, go to your newly created Snowflake instance and follow these steps:
 
-```
-SNOWFLAKE_SCHEMA
-
-This variable should contain the schema name for the Snowflake database.
-```
-
-```
-SNOWFLAKE_TABLE
-
-This variable should contain the table name for the Snowflake database.
-```
-
-```
-SNOWFLAKE_CONNECTOR_API_KEY
-
-This variable should contain the API key for the Snowflake connector.
-```
-
-```
-SNOWFLAKE_SEARCH_FIELDS_MAPPING
-
-This variable should contain a JSON object mapping Cohere fields
-to Snowflake fields(key is Snowflake field which will be used for search
-and should be correct data field from table we search through,
-the value is Cohere field).
-```
-
-## Using Test Data
-
-Snowflake has a 30-day trial. For local development of this connector, you can use a Snowflake trial account with the Standard Edition.
-
-The values in `.env-template` are based on creating a Snowflake database named `bbq`, with a schema called
-`bbq`, and the `dev/bbq.csv` file from this repo being imported into the Snowflake database, using the
-GUI tool on the Snowflake Account Admin page.
-
-Before importing the CSV, you must create the `bbq` table.
+1. Under Data > Databases, select `+ Database` and add a new Database named `bbq`.
+2. Under your newly created `bbq` Database, select `+ Schema` and add a new Schema named `bbq`.
+3. Select the `bbq` schema and created a new Table, copy paste the following into the create command:
 
 ```sql
 create table bbq2
@@ -91,6 +55,8 @@ create table bbq2
     Rank        text
 );
 ```
+
+4. After creating the table, you can then select it and click `Load Data`, where you can then upload the `dev/bbq.csv` file. Select the option to ignore headers and to have optional enclosing double quotes.
 
 ## Development
 

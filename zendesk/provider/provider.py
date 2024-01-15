@@ -1,9 +1,8 @@
-import base64
 import logging
 
 import requests
 from flask import current_app as app
-
+from .client import get_client
 from . import UpstreamProviderError
 
 logger = logging.getLogger(__name__)
@@ -36,22 +35,6 @@ def serialize_results(data):
 
 
 def search(query):
-    assert (email := app.config.get("EMAIL")), "ZENDESK_EMAIL must be set"
-    assert (domain := app.config.get("DOMAIN")), "ZENDESK_DOMAIN must be set"
-    assert (token := app.config.get("API_TOKEN")), "ZENDESK_API_TOKEN must be set"
+    zendesk_client = get_client()
 
-    per_page = app.config.get("SEARCH_LIMIT", 20)
-
-    credentials = f"{email}/token:{token}"
-    auth_header = {
-        "Authorization": f"Basic {base64.b64encode(credentials.encode()).decode()}"
-    }
-    search_url = f"https://{domain}/api/v2/search.json"
-    params = {"query": query, "per_page": per_page}
-
-    response = requests.get(search_url, params=params, headers=auth_header)
-
-    if response.status_code != 200:
-        raise UpstreamProviderError(f"Failed to query Zendesk: {response.text}")
-
-    return serialize_results(response.json().get("results", []))
+    return serialize_results(zendesk_client.search(query))

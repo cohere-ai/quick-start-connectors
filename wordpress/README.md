@@ -4,8 +4,27 @@ Connects Cohere to Wordpress.
 
 ## Configuration
 
-This connector requires that the environment variables `WORDPRESS_USERNAME`, `WORDPRESS_PASSWORD`, and `WORDPRESS_CONNECTOR_API_KEY` be set in order to run. These variables can optionally be put into a `.env` file for development.
+This connector requires that the environment variables `WORDPRESS_URL`,`WORDPRESS_USERNAME`, `WORDPRESS_PASSWORD` be set in order to run.
+These variables can optionally be put into a `.env` file for development.
 A `.env-template` file is provided as a reference.
+
+`WORDPRESS_URL`
+This variable should contain the URL of the Wordpress instance to connect to.
+
+`WORDPRESS_USERNAME`
+This variable should contain the username of the Wordpress user to connect as.
+
+`WORDPRESS_PASSWORD`
+To set this variable go to your user settings and generate an Application Password for your account.
+
+`WORDPRESS_CONNECTOR_API_KEY`
+This variable should contain the API key for the connector.
+
+## Optional Configuration
+```
+WORDPRESS_SEARCH_LIMIT
+```
+This variable may contain the maximum number of results to return from the search. The default is 20.
 
 ## Development
 
@@ -16,7 +35,7 @@ A docker-compose file is provided for local testing. Start it with
 ```
 
 and complete the setup by visiting http://localhost:8000 and completing the installation. Once installation is finished log in to your account, navigate to user settings, and create
-an Application Password that will be used by this development environment.
+an Application Password that will be used by this development environment. Set this password as the value of `WORDPRESS_PASSWORD` in your `.env` file.
 
 To start the connector, create a virtual environment and install dependencies with poetry. We recommend using in-project virtual environments:
 

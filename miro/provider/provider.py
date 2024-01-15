@@ -1,36 +1,37 @@
-import logging
-import json
 from typing import Any
+from .client import get_client
 
-import requests
 from flask import current_app as app
 
-from . import UpstreamProviderError
 
+def serialize_results(data, mappings={}):
+    """
+    Serialize a list of dictionaries by transforming keys based on provided mappings
+    and converting values to strings.
 
-logger = logging.getLogger(__name__)
+    Parameters:
+    - data (list): A list of dictionaries to be serialized.
+    - mappings (dict): A dictionary specifying key mappings for transformation.
 
-BASE_PATH = "https://api.miro.com/v2"
+    Returns:
+    list: A serialized list of dictionaries with transformed keys and string-converted values.
+    """
+
+    def serialize_item(item):
+        serialized_item = {}
+        for k, v in item.items():
+            key = k if k not in mappings else mappings[k]
+            serialized_item[key] = (
+                str(v) if not isinstance(v, list) else ", ".join(str(vl) for vl in v)
+            )
+
+        return serialized_item
+
+    return list(map(serialize_item, data))
 
 
 def search(query) -> list[dict[str, Any]]:
-    url = BASE_PATH + "/boards"
-    assert (token := app.config.get("ACCESS_TOKEN")), "MIRO_ACCESS_TOKEN must be set"
-
-    params = {"query": query}
-
-    headers = {
-        "Authorization": f"Bearer {token}",
-    }
-
-    response = requests.get(
-        url,
-        headers=headers,
-        params=params,
-    )
-
-    if response.status_code != 200:
-        message = response.text or f"Error: HTTP {response.status_code}"
-        raise UpstreamProviderError(message)
-
-    return response.json()["data"]
+    client = get_client()
+    results = client.search(query)
+    mapping = app.config.get("FIELDS_MAPPING", {})
+    return serialize_results(results, mapping)
