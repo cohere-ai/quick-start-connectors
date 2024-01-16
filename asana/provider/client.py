@@ -14,6 +14,7 @@ class AsanaClient:
         "actual_time_minutes",
         "name",
         "notes",
+        "permalink_url",
         "approval_status",
         "assignee",
         "assignee.name",
@@ -57,11 +58,6 @@ class AsanaClient:
         self.fields_mapping = fields_mapping
         self.headers = {"Authorization": f"Bearer {self.access_token}"}
 
-    def add_task_url_to_results(self, results):
-        for result in results:
-            result["url"] = f"{self.BASE_URL}/0/0/{result['gid']}"
-        return results
-
     def search(self, query):
         search_url = f"{self.API_URL}/workspaces/{self.workspace_gid}/tasks/search"
         params = {
@@ -80,7 +76,7 @@ class AsanaClient:
             message = response.text or f"Error: HTTP {response.status_code}"
             raise UpstreamProviderError(message)
 
-        return self.add_task_url_to_results(response.json()["data"])
+        return response.json()["data"]
 
 
 def get_client():

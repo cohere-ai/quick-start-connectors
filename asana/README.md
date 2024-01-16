@@ -9,6 +9,7 @@ The Asana connector only offers full-text search for Task objects.
 ## Configuration
 The Asana connector provides two authentication methods: [Personal Access Token](https://developers.asana.com/docs/personal-access-token) and [OAuth 2.0](https://developers.asana.com/docs/oauth)
 
+### (Method 1) Personal Access Token
 If you are using a personal access token, you need to set the following environment variables:
 ```
 ASANA_AUTH_TYPE=access_token
@@ -17,6 +18,7 @@ and head to your Asana Developer Console. From here, you can create a new Person
 Additionally, to safeguard the connector from abuse, set the `ASANA_CONNECTOR_API_KEY` environment variable to a secure value for bearer token authentication. 
 Do not set this variable if you are using OAuth 2.0 authentication.
 
+### (Method 2) OAuth 2.0
 If you are using OAuth 2.0, you need to set the following environment variables:
 ```
 ASANA_AUTH_TYPE=oauth
@@ -45,18 +47,21 @@ Here is an example of how to register the connector with Cohere's API using Oaut
 
 Then, head to your Admin Console. The URL at the top of your web browser should look like `https://app.asana.com/admin/<workspace_gid>`, 
 grab the `<workspace_gid>` value and use it for `ASANA_WORKSPACE_GID`.
+This variable is required for both authentication methods.
 
 ## Optional Configuration
 ```
 ASANA_TASK_PROPERTIES
 ```
 This variable may contain a comma-separated list of task properties (e.g. ["name","notes"]).
+See the documentation [here](https://developers.asana.com/reference/tasks#task).
 By default, the following task properties are returned:
 ```
 [
         "actual_time_minutes",
         "name",
         "notes",
+        "permalink_url",
         "approval_status",
         "assignee",
         "assignee.name",
