@@ -6,7 +6,7 @@ from . import UpstreamProviderError
 client = None
 
 
-class HackerNewsClient:
+class HackernewsClient:
     BASE_URL = "https://hn.algolia.com/api/v1"
 
     def __init__(self, search_limit):
@@ -48,5 +48,5 @@ def get_client():
     if client is not None:
         return client
 
-    client = HackerNewsClient(search_limit)
+    client = HackernewsClient(search_limit)
     return client
