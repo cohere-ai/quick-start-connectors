@@ -4,10 +4,11 @@ Connect Cohere to AWS Kendra.
 
 ## Configuration
 
-To use this connector, you must first configure AWS Kendra. Once you have Kendra configured, you
-will need to set three environment variables in order to use this connector: `AWS_ACCESS_KEY_ID`,
+To use this connector, you must first [configure AWS Kendra](https://docs.aws.amazon.com/kendra/latest/dg/setup.html). Once you have Kendra configured, you
+will need to set four environment variables in order to use this connector: `AWS_DEFAULT_REGION`, `AWS_ACCESS_KEY_ID`,
 `AWS_SECRET_ACCESS_KEY` and `KENDRA_INDEX_ID`.
 
+The `AWS_DEFAULT_REGION` environment variable corresponds to the AWS region that you have configured Kendra in.
 The `AWS_ACCESS_KEY_ID` and `AWS_SECRET_ACCESS_KEY` correspond to an IAM user configured with access
 to Kendra. The `KENDRA_INDEX_ID` value corresponds to the Kendra index that you would like this
 connector to search. The value can be found on the Kendra Index Settings page in AWS Management Console.
