@@ -41,7 +41,7 @@ class ServiceNowClient:
     def search(self, query):
         params = {
             "sysparm_display_value": True,
-            "sysparm_limit": app.config.get("RESULT_LIMIT", self.search_limit),
+            "sysparm_limit": self.search_limit,
             "sysparm_query": f"GOTO123TEXTQUERY321={query}",
         }
         if self.auth_type == "oauth":
@@ -59,7 +59,9 @@ class ServiceNowClient:
 
 
 def get_client():
-    assert (auth_type := app.config.get("AUTH_TYPE")), "ASANA_AUTH_TYPE must be set"
+    assert (
+        auth_type := app.config.get("AUTH_TYPE")
+    ), "SERVICENOW_AUTH_TYPE must be set"
     user_name = password = access_token = None
     if auth_type == "basic":
         assert (
