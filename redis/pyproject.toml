@@ -6,11 +6,19 @@ authors = ["Scott Mountenay <scott@lightsonsoftware.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-connexion = "^2.14.2"
+python = "^3.11"
+connexion = {version = "2.14.2", extras = ["swagger-ui"]}
 python-dotenv = "^1.0.0"
-redis = "^4.6.0"
-flask = {version = "2.2.5", extras = ["swagger-ui"]}
+flask = "2.2.5"
+mypy = "^1.4.1"
+gunicorn = "^21.2.0"
+pytest = "^7.4.4"
+redis = "^5.0.1"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  ".","provider"
+]
 
 [tool.poetry.group.dev.dependencies]
 black = "^23.7.0"
