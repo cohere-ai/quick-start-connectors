@@ -4,7 +4,12 @@ A simple connector that will connect Vectara with Cohere.
 
 ## Configuration
 
-This connector requires the following environment variables:
+[Vectara](https://vectara.com/) is the trusted GenAI and semantic search platform that provides an easy-to-use API for document indexing and querying for its 
+RAG-as-a-service platform. 
+
+To get started with Vectara, [sign up](https://console.vectara.com/signup) (if you haven't already) and follow our [quickstart](https://docs.vectara.com/docs/quickstart) guide to create a corpus and an API key. 
+
+Once you have these, you can provide them as environment variables, which will be used by the Cohere connector:
 
 ```
 VECTARA_CUSTOMER_ID
