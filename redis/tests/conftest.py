@@ -74,6 +74,9 @@ def mock_search_provider():
 
 
 @pytest.fixture
-def mock_client_search():
+def mock_client_search(configure_app_env):
+    configure_app_env({"FIELDS_MAPPING": {"features": "text", "name": "title"}})
+    configure_app_env({"FIELDS": "id,name,description,brand,color,country,rank"})
+    configure_app_env({"INDEX": "bbq_index"})
     with patch("provider.client.RedisClient.search") as mock:
         yield mock

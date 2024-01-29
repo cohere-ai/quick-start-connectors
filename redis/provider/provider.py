@@ -17,6 +17,7 @@ def serialize_results(data, mappings={}):
 
     def serialize_item(item):
         serialized_item = {}
+
         for k, v in item.items():
             key = k if k not in mappings else mappings[k]
             serialized_item[key] = (

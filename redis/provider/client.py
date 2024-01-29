@@ -1,4 +1,4 @@
-import requests
+import json
 from flask import current_app as app
 import redis
 from redis.commands.search.query import Query
@@ -46,7 +46,7 @@ class RedisClient:
         except Exception as e:
             raise UpstreamProviderError(f"Redis search error: {e}")
 
-        return [vars(doc) for doc in search_results.docs]
+        return [doc.__dict__ for doc in search_results.docs]
 
 
 def get_client():

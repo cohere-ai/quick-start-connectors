@@ -2,14 +2,14 @@ from provider import UpstreamProviderError
 
 
 def test_search_success(authed_client, configure_app_env, mock_client_search):
-    configure_app_env({"REDIS_FIELDS_MAPPING": {"features": "text", "name": "title"}})
     mock_client_search.return_value = [
         {
-            "id": "bbq_B07WYJTB3P",
-            "rank": "240",
-            "brand": "ProCom",
-            "name": "ProCom FBNSD28T Ventless Dual Fuel Firebox Insert, 29 in",
-            "color": "29 In.",
+            "id": "bbq_B08H18XLP9",
+            "rank": "233",
+            "brand": "ARC Advanced Royal Champion",
+            "name": "ARC SS4242S Propane Burner",
+            "features": "The propane burner adopts all-welded stainless steel frame",
+            "color": "Stainless Steel",
             "description": "",
             "country": "us",
         }
@@ -19,16 +19,16 @@ def test_search_success(authed_client, configure_app_env, mock_client_search):
         "/search",
         json={"query": "test"},
     )
-
     assert response.status_code == 200
     assert response.get_json() == {
         "results": [
             {
-                "id": "bbq_B07WYJTB3P",
-                "rank": "240",
-                "brand": "ProCom",
-                "title": "ProCom FBNSD28T Ventless Dual Fuel Firebox Insert, 29 in",
-                "color": "29 In.",
+                "id": "bbq_B08H18XLP9",
+                "rank": "233",
+                "brand": "ARC Advanced Royal Champion",
+                "title": "ARC SS4242S Propane Burner",
+                "text": "The propane burner adopts all-welded stainless steel frame",
+                "color": "Stainless Steel",
                 "description": "",
                 "country": "us",
             }
@@ -38,18 +38,17 @@ def test_search_success(authed_client, configure_app_env, mock_client_search):
 
 
 def test_search_fail(authed_client, mock_client_search):
-    mock_client_search.return_value = UpstreamProviderError
-
+    mock_client_search.side_effect = UpstreamProviderError("test error")
     response = authed_client.post(
         "/search",
         json={"query": "test"},
     )
 
-    assert response.status_code == 500
+    assert response.status_code == 502
     assert response.get_json() == {
-        "detail": "The server encountered an internal error and was unable to complete your request. Either the server is overloaded or there is an error in the application.",
-        "status": 500,
-        "title": "Internal Server Error",
+        "detail": "test error",
+        "status": 502,
+        "title": "Bad Gateway",
         "type": "about:blank",
     }
     mock_client_search.assert_called_once_with("test")

@@ -35,8 +35,8 @@ def test_bearer_auth_missing_token_401(client, configure_app_env, mock_search_pr
     assert response.status_code == 401
 
 
-def test_bearer_auth_missing_env_variable_with_header_200(client, mock_search_provider):
-    client.application.config.pop("CONNECTOR_API_KEY")
+def test_bearer_auth_missing_env_variable_with_header_401(client, mock_search_provider):
+    client.application.config.pop("CONNECTOR_API_KEY", None)
 
     response = client.post(
         "/search",
@@ -44,15 +44,13 @@ def test_bearer_auth_missing_env_variable_with_header_200(client, mock_search_pr
         json={"query": "test"},
     )
 
-    assert response.status_code == 200
-    # Mock returns [] for search results
-    assert response.get_json() == {"results": []}
+    assert response.status_code == 401
 
 
 def test_bearer_auth_missing_env_variable_without_header_401(
     client, mock_search_provider
 ):
-    client.application.config.pop("CONNECTOR_API_KEY")
+    client.application.config.pop("CONNECTOR_API_KEY", None)
 
     response = client.post(
         "/search",
