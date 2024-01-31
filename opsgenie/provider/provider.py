@@ -26,9 +26,11 @@ def serialize_results(data):
         result = {
             "text": item["message"] if "message" in item and item["message"] else "",
             "url": f"{domain}/incident/detail/{item['id']}",
-            "tags": ", ".join(item["tags"])
-            if "tags" in item and isinstance(item["tags"], list)
-            else "",
+            "tags": (
+                ", ".join(item["tags"])
+                if "tags" in item and isinstance(item["tags"], list)
+                else ""
+            ),
         }
         for key, value in item.items():
             if key not in ["message", "tags"]:
