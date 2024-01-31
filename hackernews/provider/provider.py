@@ -41,8 +41,4 @@ def decorate_and_serialize_search_result(result):
             if len(text_list) > 0:
                 stripped_result["text"] = "".join(text_list)
 
-        if stripped_result.get("text") is not None:
-            # Fix HTML tags that can break request response for Coral
-            stripped_result["text"] = stripped_result["text"].replace('"', "'")
-
     return stripped_result
