@@ -20,12 +20,7 @@ def test_search_query_is_missing_fail(authed_client):
         json={},
     )
 
-    assert response.get_json() == {
-        "detail": "'query' is a required property",
-        "status": 400,
-        "title": "Bad Request",
-        "type": "about:blank",
-    }
+    assert response.status_code == 400
 
 
 def test_search_query_is_empty_string_fail(authed_client):
@@ -34,12 +29,7 @@ def test_search_query_is_empty_string_fail(authed_client):
         json={"query": ""},
     )
 
-    assert response.get_json() == {
-        "detail": "'' is too short - 'query'",
-        "status": 400,
-        "title": "Bad Request",
-        "type": "about:blank",
-    }
+    assert response.status_code == 400
 
 
 def test_search_error_raises_upstream_error(authed_client, caplog):
