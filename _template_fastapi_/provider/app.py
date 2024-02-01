@@ -1,20 +1,21 @@
 import logging
-import os
-import uvicorn
+from typing import Optional
 
-from client import CustomClient
-from typing import List, Optional
-from dotenv import load_dotenv
-from fastapi import Depends, FastAPI, HTTPException, Header, Request
-from datamodels import DataItem, Request, Response
+from fastapi import Depends, FastAPI, HTTPException, Header, Response, status
+
+import provider
+from config import AppConfig
+from datamodels import SearchRequest, SearchResponse
+from exceptions import UpstreamProviderError
 
 
 logging.basicConfig(level=logging.DEBUG)
+logger = logging.getLogger(__name__)
 
-load_dotenv()
-SERVICE_API_KEY = os.getenv("CONNECTOR_API_KEY")
 app = FastAPI()
-client = CustomClient()
+config = AppConfig()
+
+logger.info(f"CONNECTOR_ID: {config.CONNECTOR_ID}")
 
 
 def authenticate(Authorization: str = Header(None)) -> None:
@@ -24,14 +25,16 @@ def authenticate(Authorization: str = Header(None)) -> None:
     Args:
         Authorization (str, optional): Authorization header. Defaults to Header(None).
     """
-    if Authorization is None or Authorization != f"Bearer {SERVICE_API_KEY}":
-        raise HTTPException(status_code=401, detail="Unauthorized")
-    logging.debug("authenticate: (OK)")
+    if Authorization is None or Authorization != f"Bearer {config.CONNECTOR_API_KEY}":
+        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
+                            detail="Invalid or Missing Authorization Header")
+    logger.debug("authenticate: (OK)")
 
 
-@app.post("/search", response_model=Response)
-async def search(request: Optional[Request] = None, 
-                 user: None = Depends(authenticate)) -> Response:
+@app.post("/search", response_model=SearchResponse)
+async def search(response: Response,
+                 request: Optional[SearchRequest] = None,
+                 user: None = Depends(authenticate)):
     """
     Search Endpoint
 
@@ -40,19 +43,18 @@ async def search(request: Optional[Request] = None,
         user (None, optional): User object. Defaults to Depends(authenticate).
 
     Returns:
-        Response: Response object (see datamodels.py)
+        JSONResponse: Response object
     """
+    response.headers["X-Connector-ID"] = config.CONNECTOR_ID
+
     if request is None:
-        logging.debug(f"search: missing_body")
-        return Response(results=[])
+        return SearchResponse(results=[])
+
     try:
-        logging.debug(f"search:request.query: {request.query}")
-        data = client.search(query=request.query)
-        return Response(results=[DataItem(**d) for d in data])
-    except Exception as error:
-        logging.error(f"search:error: {error}")
-        return Response(results=[])
+        data = provider.search(request.query)
+    except UpstreamProviderError as error:
+        logger.error(f"upstream_search_error: {error.message}")
+        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, 
+                            detail="Error with search provider")
 
-
-if __name__ == "__main__":
-    run(app, host='0.0.0.0', port=8080)
+    return SearchResponse(results=data)
