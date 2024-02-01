@@ -31,11 +31,9 @@ ALLOWED_ENTITY_TYPES = {
 
 def serialize_results(data, mappings):
     serialized_data = {
-        k
-        if k not in mappings
-        else mappings[k]: ", ".join(str(vl) for vl in v)
-        if isinstance(v, list)
-        else str(v)
+        k if k not in mappings else mappings[k]: (
+            ", ".join(str(vl) for vl in v) if isinstance(v, list) else str(v)
+        )
         for k, v in data.items()
     }
     return serialized_data
@@ -61,9 +59,9 @@ def search_allowed_entities(client, query, allowed_entities):
                 if any(keyword in value for keyword in keywords):
                     entity["entity_type"] = entity_type
                     if entity_type == "user":
-                        entity[
-                            "full_name"
-                        ] = f"{entity['first_name']} {entity['last_name']}"
+                        entity["full_name"] = (
+                            f"{entity['first_name']} {entity['last_name']}"
+                        )
                     entity = serialize_results(
                         entity, searchable_entities[entity_type]["mapping"]
                     )
