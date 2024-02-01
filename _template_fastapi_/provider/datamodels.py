@@ -4,7 +4,7 @@ See https://docs.cohere.com/docs/connectors
 """
 from datetime import datetime
 from pydantic import BaseModel, HttpUrl
-from typing import List, Optional, Union
+from typing import List, Optional
 
 
 class DataItem(BaseModel):
@@ -38,7 +38,7 @@ class Request(BaseModel):
     query: Optional[str] = None
 
 
-class Response(BaseModel):
+class Result(BaseModel):
     """	
     The Connector should return a list of DataItems.
 
