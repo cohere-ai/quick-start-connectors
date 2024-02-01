@@ -1,15 +1,30 @@
 """
 Client class to retrieve data from a custom data source
 """
+import os
+import logging
 from datetime import datetime
 from datamodels import DataItem
 
+logger = logging.getLogger(__name__)
+
+DEFAULT_SEARCH_LIMIT = 5
+
+client = None
+
 class CustomClient:
-    def __init__(self):
+    def __init__(self, token: str, search_limit: int):
         """
-        Initialize the client
+        You might need to adapt the headers and authentication method.
+
+        Args:
+            token (str): Authentication token
+            search_limit (int): Maximum number of results to return
         """
-        pass
+        self.headers = {
+            "Authorization": f"Bearer {token}",
+        }
+        self.search_limit = search_limit
 
     def search(self, query: str):
         """
@@ -21,6 +36,8 @@ class CustomClient:
         Returns:
             List[dict]: List of data items
         """
+        logger.debug(f"search:query: {query}")
+
         data = [
             {
                 "id": 1,
@@ -38,3 +55,20 @@ class CustomClient:
             }
         ]
         return data
+
+def get_client():
+    """
+    Create or Retrieve a global singleton Client instance.
+
+    Returns:
+        CustomClient: Client instance
+    """
+    global client
+    if client is not None:
+        return client
+
+    assert (token := os.getenv("CLIENT_AUTH_TOKEN")), "CLIENT_AUTH_TOKEN must be set"
+    search_limit = int(os.getenv("CLIENT_SEARCH_LIMIT")) or DEFAULT_SEARCH_LIMIT
+    client = CustomClient(token, search_limit)
+
+    return client
