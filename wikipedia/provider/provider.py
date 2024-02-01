@@ -39,8 +39,8 @@ def serialize_search_result(result):
     # Build URL manually with pageid
     if "pageid" in result:
         wikipedia_client = get_client()
-        stripped_result[
-            "url"
-        ] = f"{wikipedia_client.BASE_ARTICLE_URL}{stripped_result['pageid']}"
+        stripped_result["url"] = (
+            f"{wikipedia_client.BASE_ARTICLE_URL}{stripped_result['pageid']}"
+        )
 
     return stripped_result
