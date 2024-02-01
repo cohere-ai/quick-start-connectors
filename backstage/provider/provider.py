@@ -41,11 +41,9 @@ def serialize_results(data, mappings):
     serialized_data = list(
         map(
             lambda item: {
-                k
-                if k not in mappings
-                else mappings[k]: ", ".join(str(vl) for vl in v)
-                if isinstance(v, list)
-                else str(v)
+                k if k not in mappings else mappings[k]: (
+                    ", ".join(str(vl) for vl in v) if isinstance(v, list) else str(v)
+                )
                 for k, v in item.items()
             },
             data,

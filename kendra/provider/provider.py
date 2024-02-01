@@ -1,24 +1,37 @@
 import logging
 from typing import Any
-
-import botocore
-import boto3
-from flask import current_app as app
-
-from . import UpstreamProviderError
+from .client import get_client
 
 
 logger = logging.getLogger(__name__)
 
 
+def serialize_results(data, mappings={}):
+    """
+    Serialize a list of dictionaries by transforming keys based on provided mappings
+    and converting values to strings.
+
+    Parameters:
+    - data (list): A list of dictionaries to be serialized.
+    - mappings (dict): A dictionary specifying key mappings for transformation.
+
+    Returns:
+    list: A serialized list of dictionaries with transformed keys and string-converted values.
+    """
+
+    def serialize_item(item):
+        serialized_item = {}
+        for k, v in item.items():
+            key = k if k not in mappings else mappings[k]
+            serialized_item[key] = (
+                str(v) if not isinstance(v, list) else ", ".join(str(vl) for vl in v)
+            )
+
+        return serialized_item
+
+    return list(map(serialize_item, data))
+
+
 def search(query) -> list[dict[str, Any]]:
-    assert (index_id := app.config.get("INDEX_ID")), "KENDRA_INDEX_ID must be set"
-
-    kendra = boto3.client("kendra")
-
-    try:
-        response = kendra.retrieve(QueryText=query, IndexId=index_id)
-    except botocore.exceptions.ClientError as err:
-        raise UpstreamProviderError(str(err)) from err
-
-    return response["ResultItems"]
+    client = get_client()
+    return serialize_results(client.search(query), client.fields_mapping)
