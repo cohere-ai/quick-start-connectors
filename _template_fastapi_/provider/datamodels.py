@@ -29,7 +29,7 @@ class DataItem(BaseModel):
     timestamp: datetime
 
 
-class Request(BaseModel):
+class SearchRequest(BaseModel):
     """
     The Connector should accept a Request object with a query field.
 
@@ -38,7 +38,7 @@ class Request(BaseModel):
     query: Optional[str] = None
 
 
-class Result(BaseModel):
+class SearchResponse(BaseModel):
     """	
     The Connector should return a list of DataItems.
 
