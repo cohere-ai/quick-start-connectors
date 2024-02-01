@@ -1,18 +1,18 @@
-"""
-Client class to retrieve data from a custom data source
-"""
-import os
 import logging
-from datetime import datetime
-from datamodels import DataItem
+from typing import Dict, List
+
+from config import AppConfig
 
 logger = logging.getLogger(__name__)
 
-DEFAULT_SEARCH_LIMIT = 5
-
 client = None
+config = AppConfig()
+
 
 class CustomClient:
+    """
+    Client class to retrieve data from a custom data source
+    """
     def __init__(self, token: str, search_limit: int):
         """
         You might need to adapt the headers and authentication method.
@@ -22,22 +22,23 @@ class CustomClient:
             search_limit (int): Maximum number of results to return
         """
         self.headers = {
-            "Authorization": f"Bearer {token}",
+            "Authorization": f"Bearer {token}"
         }
         self.search_limit = search_limit
 
-    def search(self, query: str):
+    def search(self, query: str) -> List[Dict]:
         """
-        Logic to retrieve data based on query
+        Retrieve data based on the query.
 
         Args:
             query (str): Query string
 
         Returns:
-            List[dict]: List of data items
+            List[Dict]: List of data items.
         """
         logger.debug(f"search:query: {query}")
 
+        # TODO: Replace mock data with actual data retrieval logic.
         data = [
             {
                 "id": 1,
@@ -56,7 +57,8 @@ class CustomClient:
         ]
         return data
 
-def get_client():
+
+def get_client() -> CustomClient:
     """
     Create or Retrieve a global singleton Client instance.
 
@@ -64,11 +66,7 @@ def get_client():
         CustomClient: Client instance
     """
     global client
-    if client is not None:
-        return client
-
-    assert (token := os.getenv("CLIENT_AUTH_TOKEN")), "CLIENT_AUTH_TOKEN must be set"
-    search_limit = int(os.getenv("CLIENT_SEARCH_LIMIT")) or DEFAULT_SEARCH_LIMIT
-    client = CustomClient(token, search_limit)
-
+    if client is None:
+        client = CustomClient(config.CLIENT_AUTH_TOKEN,
+                              config.CLIENT_SEARCH_LIMIT)
     return client
