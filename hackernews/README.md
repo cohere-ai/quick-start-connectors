@@ -35,3 +35,9 @@ The Flask API will be bound to :code:`localhost:5000`.
 ```
 
 Alternatively, load up the Swagger UI and try out the API from a browser: http://localhost:5000/ui/
+
+For unit testing, please run:
+
+```bash
+  poetry run pytest
+```

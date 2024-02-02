@@ -1,7 +1,6 @@
 import logging
 from typing import Any
 
-
 from .client import get_client
 
 logger = logging.getLogger(__name__)

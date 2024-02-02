@@ -18,6 +18,7 @@ flask = "2.2.5"
 [tool.poetry.group.development.dependencies]
 black = "^23.7.0"
 types-requests = "^2.31.0.1"
+pytest = "^7.4.4"
 
 [build-system]
 requires = ["poetry-core"]
