@@ -1,4 +1,4 @@
-version: "1"
+version: "3.8"
 services:
   redis:
     image: redis/redis-stack:latest
@@ -21,9 +21,9 @@ services:
     depends_on:
       - redis
     volumes:
-      - ./dev/bbq.csv:/bbq.csv
+      - ./dev/bbq.csv:/dev/bbq.csv
       - ./dev/load_data.py:/load_data.py
-    command: sh -c "pip install redis && python3 /load_data.py"
+    command: sh -c "pip install redis python-dotenv && python3 /load_data.py"
     profiles:
       - tools
     networks:

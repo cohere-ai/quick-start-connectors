@@ -1,41 +1,36 @@
 from typing import Any
-
-import redis
-from flask import current_app as app
+from .client import get_client
 
 
-DEFAULT_HOST = "localhost"
-DEFAULT_PORT = 6379
+def serialize_results(data, mappings={}):
+    """
+    Serialize a list of dictionaries by transforming keys based on provided mappings
+    and converting values to strings.
 
-r = None
-fields = None
+    Parameters:
+    - data (list): A list of dictionaries to be serialized.
+    - mappings (dict): A dictionary specifying key mappings for transformation.
+
+    Returns:
+    list: A serialized list of dictionaries with transformed keys and string-converted values.
+    """
+
+    def serialize_item(item):
+        serialized_item = {}
+
+        for k, v in item.items():
+            key = k if k not in mappings else mappings[k]
+            serialized_item[key] = (
+                str(v) if not isinstance(v, list) else ", ".join(str(vl) for vl in v)
+            )
+
+        return serialized_item
+
+    return list(map(serialize_item, data))
 
 
 def search(query) -> list[dict[str, Any]]:
-    global r
-    global fields
+    client = get_client()
+    search_results = client.search(query)
 
-    if not r:
-        r = redis.Redis(
-            host=app.config.get("HOST", DEFAULT_HOST),
-            port=app.config.get("PORT", DEFAULT_PORT),
-            decode_responses=True,
-        )
-
-    if not fields:
-        assert (
-            fields := app.config.get("FIELDS")
-        ), "REDIS_FIELDS config var must be set"
-        fields = fields.split(",")
-
-    assert (index := app.config.get("INDEX")), "REDIS_INDEX config var must be set"
-
-    redisearch_results = r.ft(index).search(query)
-
-    results = []
-
-    for doc in redisearch_results.docs:
-        result = {field: getattr(doc, field) for field in fields}
-        results.append(result)
-
-    return results
+    return serialize_results(search_results, client.fields_mapping)
