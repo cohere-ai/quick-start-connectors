@@ -95,14 +95,14 @@ def vectara_query(
         return []
 
     res = []
-    for x in responses:
-        md = {m["name"]: m["value"] for m in x["metadata"]}
-        doc_inx = x["documentIndex"]
+    for resp in responses[:config.similarity_top_k]:
+        md = {m["name"]: m["value"] for m in resp["metadata"]}
+        doc_inx = resp["documentIndex"]
         doc_id = documents[doc_inx]["id"]
         doc_md = {m["name"]: m["value"] for m in documents[doc_inx]["metadata"]}
         item = {
             "id": doc_id,
-            "text": _remove_snippet(x["text"])
+            "text": _remove_snippet(resp["text"])
         }
         item.update(doc_md)
         item.update(md)
