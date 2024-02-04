@@ -1,6 +1,6 @@
 # Vectara Quick Start Connector
 
-A simple connector that will connect Vectara with Cohere.
+A simple connector that will allow the use of Vectara with Cohere, as a retriever that can pull data from the Vectara corpus.
 
 ## Configuration
 
@@ -13,18 +13,19 @@ Once you have these, you can provide them as environment variables, which will b
 ```
 VECTARA_CUSTOMER_ID
 
-This variable shoud contain the Vectara Customer ID.
+This variable should contain the Vectara Customer ID.
 ```
 
 ```
 VECTARA_CORPUS_ID
 
-This variable shoud contain the Vectara corpus ID. It can be a single string or a list of IDs, in which case results will return from all the Vectara corpora listed.
+This variable should contain the Vectara corpus ID. It can be a single string or a list of IDs (comma separated list of IDs), in which case results will return from all the Vectara corpora listed.
 ```
 
 ```
 VECTARA_API_KEY
-This variable should contain a single API key that provides authentication to Vectara for the corpus specified (or corpora if more than 1 is listed).
+
+This variable should contain a single API key that provides authentication to Vectara for the corpus specified (or corpora if more than 1 is listed). This Vectara API key should have query permission.
 ```
 
 ### Optional configuration

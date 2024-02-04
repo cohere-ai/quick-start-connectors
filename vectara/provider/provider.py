@@ -2,13 +2,14 @@ import json
 import logging
 import requests
 from flask import current_app as app
+from dictdot import dictdot
 
 logger = logging.getLogger(__name__)
 
 START_SNIPPET = "<%START%>"
 END_SNIPPET = "<%END%>"
 
-def remove_snippet(s: str) -> str:
+def _remove_snippet(s: str) -> str:
     return s.replace(START_SNIPPET, "").replace(END_SNIPPET, "")
 
 def vectara_query(
@@ -19,14 +20,14 @@ def vectara_query(
     Args:
         query: query string
     """
-    config.vectara_corpus_id = config.vectara_corpus_id.split(',')
+    config.corpus_id = config.corpus_id.split(',')
     corpus_key = [
         {
-            "customerId": config.vectara_customer_id,
+            "customerId": config.customer_id,
             "corpusId": config.corpus_id[i],
             "lexicalInterpolationConfig": {"lambda": config.lambda_val},
         }
-        for i in range(len(config.vectara_corpus_id))
+        for i in range(len(config.corpus_id))
     ]
     if len(config.filter) > 0:
         for k in corpus_key:
@@ -82,23 +83,26 @@ def vectara_query(
     responses = result["responseSet"][0]["response"]
     documents = result["responseSet"][0]["document"]
 
-    metadatas = []
-    for x in responses:
-        md = {m["name"]: m["value"] for m in x["metadata"]}
-        doc_num = x["documentIndex"]
-        doc_md = {m["name"]: m["value"] for m in documents[doc_num]["metadata"]}
-        md.update(doc_md)
-        metadatas.append(md)
+    error_codes = [
+        "BAD_REQUEST", "UNAUTHORIZED", "FORBIDDEN", "NOT_FOUND", "METHOD_NOT_ALLOWED",
+        "CONFLICT", "UNSUPPORTED_MEDIA_TYPE", "TOO_MANY_REQUESTS", "INTERNAL_SERVER_ERROR",
+        "NOT_IMPLEMENTED", "SERVICE_UNAVAILABLE", "INSUFFICIENT_STORAGE"
+    ]
+
+    status_list = result["responseSet"][0]["status"]
+    if len(status_list)>0 and status_list[0]["code"] in error_codes:
+        logger.error("Query failed: %s", result)
+        return []
 
     res = []
     for x in responses:
         md = {m["name"]: m["value"] for m in x["metadata"]}
         doc_inx = x["documentIndex"]
         doc_id = documents[doc_inx]["id"]
-        doc_md = {m["name"]: m["value"] for m in documents[doc_num]["metadata"]}
+        doc_md = {m["name"]: m["value"] for m in documents[doc_inx]["metadata"]}
         item = {
             "id": doc_id,
-            "text": remove_snippet(x["text"])
+            "text": _remove_snippet(x["text"])
         }
         item.update(doc_md)
         item.update(md)
@@ -108,21 +112,21 @@ def vectara_query(
 
 def search(query):
     assert (
-        apikey := app.config.get("VECTARA_API_KEY")
+        apikey := app.config.get("API_KEY")
     ), "VECTARA_API_KEY env var must be set"
 
     assert (
-        customer_id := app.config.get("VECTARA_CUSTOMER_ID")
+        customer_id := app.config.get("CUSTOMER_ID")
     ), "VECTARA_CUSTOMER_ID env var must be set"
 
     assert (
-        corpus_id := app.config.get("VECTARA_CORPUS_ID")
+        corpus_id := app.config.get("CORPUS_ID")
     ), "VECTARA_CORPUS_ID env var must be set"
 
-    config = {
-        "api_key": apikey,
-        "customer_id": customer_id,
-        "corpus_id": corpus_id,
+    config = dictdot({
+        "api_key": str(apikey),
+        "customer_id": str(customer_id),
+        "corpus_id": str(corpus_id),
         "lambda_val": 0.025,
         "filter": "",
         "similarity_top_k": 10,
@@ -132,7 +136,7 @@ def search(query):
         "n_sentences_before": 2,
         "n_sentences_after": 2,
         "timeout": 120,
-    }
+    })
 
     results = vectara_query(query, config)
     return results
