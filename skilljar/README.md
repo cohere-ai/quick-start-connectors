@@ -34,13 +34,13 @@ To run the Flask server in development mode, please run:
 The Flask API will be bound to :code:`http://127.0.0.1:5000`.
 
 ```bash
-  curl -X 'POST' \
-  'http://127.0.0.1:5000/search' \
-  -H 'accept: application/json' \
-  -H 'Content-Type: application/json' \
-  -d '{
-    "query": "my title"
-  }'
+  curl --request POST \
+    --url http://localhost:5000/search \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer <CONNECTOR_API_KEY>' \
+    --data '{
+      "query": "BBQ"
+    }'
 ```
 
 Alternatively, load up the Swagger UI and try out the API from a browser: http://127.0.0.1:5000/ui/
