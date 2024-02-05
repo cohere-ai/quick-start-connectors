@@ -38,9 +38,11 @@ class KnowledgeOwlClient:
 
 def get_client():
     global client
-    assert (api_key := app.config.get("API_KEY")), "KLAVIYO_API_KEY must be set"
-    if client is not None:
-        return client
 
-    client = KnowledgeOwlClient(api_key)
+    if client is None:
+        assert (
+            api_key := app.config.get("API_KEY")
+        ), "KNOWLEDGEOWL_API_KEY must be set"
+        client = KnowledgeOwlClient(api_key)
+
     return client
