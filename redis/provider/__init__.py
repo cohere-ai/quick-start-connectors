@@ -1,7 +1,7 @@
 import logging
 import os
 
-import connexion  # type: ignore
+import connexion
 from dotenv import load_dotenv
 
 

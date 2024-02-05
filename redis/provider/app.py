@@ -20,5 +20,5 @@ def search(body):
 def apikey_auth(token):
     if token != app.config.get("CONNECTOR_API_KEY"):
         raise Unauthorized()
-    # successfully authenticated
+
     return {}

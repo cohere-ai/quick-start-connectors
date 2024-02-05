@@ -6,21 +6,24 @@ authors = ["Scott Mountenay <scott@lightsonsoftware.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
-python = "^3.10"
-connexion = "^2.14.2"
+python = "^3.11"
+connexion = {version = "2.14.2", extras = ["swagger-ui"]}
 python-dotenv = "^1.0.0"
-redis = "^4.6.0"
-flask = {version = "2.2.5", extras = ["swagger-ui"]}
+flask = "2.2.5"
+gunicorn = "^21.2.0"
+redis = "^5.0.1"
 
-[tool.poetry.group.dev.dependencies]
-black = "^23.7.0"
-mypy = "^1.4.1"
+[tool.pytest.ini_options]
+pythonpath = [
+  ".","provider"
+]
 
-
-[tool.poetry.group.development.dependencies]
+[tool.poetry.dev-dependencies]
 black = "^23.7.0"
 types-colorama = "^0.4.15.12"
 types-redis = "^4.6.0.3"
+pytest = "^7.4.4"
+mypy = "^1.4.1"
 
 [build-system]
 requires = ["poetry-core"]

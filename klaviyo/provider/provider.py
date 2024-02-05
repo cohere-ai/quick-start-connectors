@@ -87,9 +87,9 @@ def serialize_record(record):
     # serialize record attributes
     if "attributes" in record and record["attributes"]:
         record["title"] = record["attributes"]["name"]
-        record[
-            "url"
-        ] = f'https://www.klaviyo.com/campaign/{record["id"]}/reports/overview'
+        record["url"] = (
+            f'https://www.klaviyo.com/campaign/{record["id"]}/reports/overview'
+        )
         for record_attribute, record_val in record["attributes"].items():
             if isinstance(record_val, dict):
                 for record_val_key, record_val_val in record_val.items():

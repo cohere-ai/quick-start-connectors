@@ -17,13 +17,17 @@ def serialize_results(data):
     for item in data:
         result = {
             "title": item["subject"] if "subject" in item and item["subject"] else "",
-            "text": item["description"]
-            if "description" in item and item["description"]
-            else "",
+            "text": (
+                item["description"]
+                if "description" in item and item["description"]
+                else ""
+            ),
             "url": item["url"] if "url" in item and item["url"] else "",
-            "tags": ", ".join(item["tags"])
-            if "tags" in item and isinstance(item["tags"], list)
-            else "",
+            "tags": (
+                ", ".join(item["tags"])
+                if "tags" in item and isinstance(item["tags"], list)
+                else ""
+            ),
         }
         for key, value in item.items():
             if key not in ["subject", "description", "url", "tags"]:
