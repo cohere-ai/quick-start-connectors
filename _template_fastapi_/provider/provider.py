@@ -33,6 +33,8 @@ def search(query: str) -> List[DataItem]:
         data_items = [DataItem(**d) for d in data]
     except ValidationError as error:
         logger.error(f"Data validation error: {error}")
-        raise UpstreamProviderError("Invalid data format received from the search") from error
+        raise UpstreamProviderError(
+            "Invalid data format received from the search"
+        ) from error
 
     return data_items

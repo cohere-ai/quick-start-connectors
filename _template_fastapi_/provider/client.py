@@ -13,6 +13,7 @@ class CustomClient:
     """
     Client class to retrieve data from a custom data source
     """
+
     def __init__(self, token: str, search_limit: int):
         """
         You might need to adapt the headers and authentication method.
@@ -21,9 +22,7 @@ class CustomClient:
             token (str): Authentication token
             search_limit (int): Maximum number of results to return
         """
-        self.headers = {
-            "Authorization": f"Bearer {token}"
-        }
+        self.headers = {"Authorization": f"Bearer {token}"}
         self.search_limit = search_limit
 
     def search(self, query: str) -> List[Dict]:
@@ -45,15 +44,15 @@ class CustomClient:
                 "url": "https://example.com/article1",
                 "title": "The Future of Technology",
                 "text": "An in-depth analysis of emerging technology trends...",
-                "timestamp": "2024-01-30 15:30:00"
+                "timestamp": "2024-01-30 15:30:00",
             },
             {
                 "id": 2,
                 "url": "https://example.com/article2",
                 "title": "Exploring the Natural World",
                 "text": "A journey through the wonders of our planet...",
-                "timestamp": "2024-01-31 10:00:00"
-            }
+                "timestamp": "2024-01-31 10:00:00",
+            },
         ]
         return data
 
@@ -67,6 +66,5 @@ def get_client() -> CustomClient:
     """
     global client
     if client is None:
-        client = CustomClient(config.CLIENT_AUTH_TOKEN,
-                              config.CLIENT_SEARCH_LIMIT)
+        client = CustomClient(config.CLIENT_AUTH_TOKEN, config.CLIENT_SEARCH_LIMIT)
     return client

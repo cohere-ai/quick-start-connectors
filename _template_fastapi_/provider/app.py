@@ -26,15 +26,19 @@ def authenticate(Authorization: str = Header(None)) -> None:
         Authorization (str, optional): Authorization header. Defaults to Header(None).
     """
     if Authorization is None or Authorization != f"Bearer {config.CONNECTOR_API_KEY}":
-        raise HTTPException(status_code=status.HTTP_401_UNAUTHORIZED,
-                            detail="Invalid or Missing Authorization Header")
+        raise HTTPException(
+            status_code=status.HTTP_401_UNAUTHORIZED,
+            detail="Invalid or Missing Authorization Header",
+        )
     logger.debug("authenticate: (OK)")
 
 
 @app.post("/search", response_model=SearchResponse)
-async def search(response: Response,
-                 request: Optional[SearchRequest] = None,
-                 user: None = Depends(authenticate)):
+async def search(
+    response: Response,
+    request: Optional[SearchRequest] = None,
+    user: None = Depends(authenticate),
+):
     """
     Search Endpoint
 
@@ -54,7 +58,9 @@ async def search(response: Response,
         data = provider.search(request.query)
     except UpstreamProviderError as error:
         logger.error(f"upstream_search_error: {error.message}")
-        raise HTTPException(status_code=status.HTTP_503_SERVICE_UNAVAILABLE, 
-                            detail="Error with search provider")
+        raise HTTPException(
+            status_code=status.HTTP_503_SERVICE_UNAVAILABLE,
+            detail="Error with search provider",
+        )
 
     return SearchResponse(results=data)
