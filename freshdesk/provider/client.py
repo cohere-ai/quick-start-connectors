@@ -3,6 +3,8 @@ from flask import current_app as app
 
 from . import UpstreamProviderError
 
+client = None
+
 
 class FreshdeskClient:
     DEFAULT_TICKET_PARAMETERS = ["tag"]
@@ -10,6 +12,7 @@ class FreshdeskClient:
     def __init__(self, api_key, domain, parameters=None):
         self.base_url = f"https://{domain}/api/v2"
         # Freshdesk uses Basic Auth with this specific format, using the API key
+        # See: https://developers.freshdesk.com/api/#authentication
         self.basic_auth = (api_key, "X")
 
         if not parameters or parameters == "":
@@ -41,10 +44,15 @@ class FreshdeskClient:
 
 
 def get_client():
-    assert (api_key := app.config.get("API_KEY")), "FRESHDESK_API_KEY must be set"
-    assert (
-        domain := app.config.get("DOMAIN_NAME")
-    ), "FRESHDESK_DOMAIN_NAME must be set"
-    parameters = app.config.get("TICKET_PARAMETERS")
+    global client
 
-    return FreshdeskClient(api_key, domain, parameters)
+    if client is None:
+        assert (api_key := app.config.get("API_KEY")), "FRESHDESK_API_KEY must be set"
+        assert (
+            domain := app.config.get("DOMAIN_NAME")
+        ), "FRESHDESK_DOMAIN_NAME must be set"
+        parameters = app.config.get("TICKET_PARAMETERS")
+
+        client = FreshdeskClient(api_key, domain, parameters)
+
+    return client
