@@ -12,6 +12,7 @@ requests = "^2.31.0"
 connexion = {version = "2.14.2", extras = ["swagger-ui"]}
 python-dotenv = "^1.0.0"
 mypy = "^1.4.1"
+gunicorn = "^21.2.0"
 
 
 [tool.poetry.group.development.dependencies]
