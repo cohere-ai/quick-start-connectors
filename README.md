@@ -44,6 +44,15 @@ For development, refer to a connector's README. Generally, there is an `.env` fi
 
 After configuring the `.env`, you will be able to use `poetry`'s CLI to start a local server.
 
+# Pre-commits
+
+It is recommended to use the pre-commits defined that will automatically lint your files. You can run a 
+`pip install pre-commit`
+
+and 
+
+`pre-commit install` within the root folder. Now your prior to committing your files will be automatically linted. Currently, the pre-commit will run black (pinned to 24.1.1).
+
 # Integrating With Cohere
 
 All of the connectors in this repository have been tailored to integrate with Cohere's [Chat](https://docs.cohere.com/reference/chat) API to make creating a grounded chatbot quick and easy.

@@ -13,7 +13,7 @@ python-dotenv = "^1.0.0"
 requests = "^2.31.0"
 gunicorn = "^21.2.0"
 asyncio = "^3.4.3"
-aiohttp = "^3.9.1"
+aiohttp = "^3.9.2"
 beautifulsoup4 = "^4.12.2"
 
 

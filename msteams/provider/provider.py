@@ -25,9 +25,7 @@ def serialize_results(results):
             "url": str(
                 result["link"]
                 if "link" in result
-                else result["webUrl"]
-                if "webUrl" in result
-                else ""
+                else result["webUrl"] if "webUrl" in result else ""
             ),
             "has_attachments": str(len(result["attachments"]) > 0),
             "date": str(result["createdDateTime"]),

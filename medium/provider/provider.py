@@ -93,9 +93,9 @@ def serialize_graphql_results(data):
 
             creator_name = catalog["creator"].pop("username", None)
             if creator_name:
-                item_to_append[
-                    "url"
-                ] = f"https://medium.com/@{creator_name}/list/{catalog.get('id')}"
+                item_to_append["url"] = (
+                    f"https://medium.com/@{creator_name}/list/{catalog.get('id')}"
+                )
             results.append({k: str(v) for k, v in item_to_append.items()})
 
     return results

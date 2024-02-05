@@ -15,7 +15,7 @@ gunicorn = "^21.2.0"
 requests = "^2.31.0"
 beautifulsoup4 = "^4.12.2"
 unstructured-client = "^0.14.3"
-aiohttp = "^3.9.1"
+aiohttp = "^3.9.2"
 asyncio = "^3.4.3"
 
 

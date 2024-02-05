@@ -1,9 +1,5 @@
-import os
 from .enums import EntityChoices
 
-BASE_PATH = f"https://{os.environ.get('FRESHSALES_BUNDLE_ALIAS', '')}/api"
-API_TOKEN = os.environ.get("FRESHSALES_API_KEY")
-RESULTS_LIMIT = 15
 ENTITY_ENV_VAR_ENABLED_MAPPING = {
     EntityChoices.USER: "USER_ENTITY_ENABLED",
     EntityChoices.CONTACT: "CONTACT_ENTITY_ENABLED",

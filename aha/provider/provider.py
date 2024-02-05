@@ -8,11 +8,9 @@ logger = logging.getLogger(__name__)
 
 def serialize_results(data, mappings):
     serialized_data = {
-        k
-        if k not in mappings
-        else mappings[k]: ", ".join(str(vl) for vl in v)
-        if isinstance(v, list)
-        else str(v)
+        k if k not in mappings else mappings[k]: (
+            ", ".join(str(vl) for vl in v) if isinstance(v, list) else str(v)
+        )
         for k, v in data.items()
     }
     return serialized_data

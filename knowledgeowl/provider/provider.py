@@ -36,8 +36,8 @@ def serialize_search_result(result):
     # Both fields required to build URL manually
     if all(key in stripped_result for key in ["project_id", "id"]):
         knowledgeowl_client = get_client()
-        stripped_result[
-            "url"
-        ] = f"{knowledgeowl_client.article_base_url}/{stripped_result['project_id']}/aid/{stripped_result['id']}"
+        stripped_result["url"] = (
+            f"{knowledgeowl_client.article_base_url}/{stripped_result['project_id']}/aid/{stripped_result['id']}"
+        )
 
     return stripped_result

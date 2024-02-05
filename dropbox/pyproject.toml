@@ -13,7 +13,7 @@ python-dotenv = "^1.0.0"
 dropbox = "^11.36.2"
 requests = "^2.31.0"
 gunicorn = "^21.2.0"
-aiohttp = "^3.9.1"
+aiohttp = "^3.9.2"
 
 
 [tool.poetry.group.development.dependencies]
