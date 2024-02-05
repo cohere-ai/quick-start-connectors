@@ -54,7 +54,7 @@ class CarbonClient:
             # Unauthorized, retry fetching access token and search once
             if response.status_code == 401 and retry:
                 self.get_access_token()
-                self.search(query, False)
+                return self.search(query, False)
             else:
                 raise UpstreamProviderError(
                     f"Error during Carbon search with query: `{query}`."

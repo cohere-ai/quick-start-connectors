@@ -44,6 +44,7 @@ The Flask API will be bound to :code:`localhost:5000`.
   curl --request POST \
     --url http://localhost:5000/search \
     --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer <CONNECTOR_API_KEY> \
     --data '{
     "query": "BBQ"
   }'
