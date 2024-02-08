@@ -31,15 +31,16 @@ and start the server
 $ poetry run flask --app provider --debug run --port 5000
 ```
 
-Check with curl to see that everything is working
+This will start your server on `localhost:5000`, you can then check that the search works with:
 
-```shell
-
-$ curl --request POST \
- --url http://localhost:5000/search \
- --header 'Content-Type: application/json' \
- --data '{ "query": "using the sdk" }'
-
+```bash
+  curl --request POST \
+    --url http://localhost:5000/search \
+    --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer <CONNECTOR_API_KEY>' \
+    --data '{
+      "query": "BBQ"
+    }'
 ```
 
-Alternatively, load up the Swagger UI and try out the API from a browser: http://localhost:5001/ui/
+Alternatively, load up the Swagger UI and try out the API from a browser: http://localhost:5000/ui/

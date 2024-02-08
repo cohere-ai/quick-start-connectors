@@ -51,13 +51,13 @@ Then start the server
 and check with curl to see that everything is working
 
 ```bash
-  $ curl --request POST \
+  curl --request POST \
     --url http://localhost:5000/search \
-    --header 'Authorization: Bearer <<CRUNCHBASE_CONNECTOR_API_KEY>>' \
     --header 'Content-Type: application/json' \
+    --header 'Authorization: Bearer <CONNECTOR_API_KEY>' \
     --data '{
-    "query": "cohere ai"
-  }'
+      "query": "BBQ"
+    }'
 ```
 
 Alternatively, load up the Swagger UI and try out the API from a browser: http://localhost:5000/ui/
