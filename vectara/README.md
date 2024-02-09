@@ -28,14 +28,10 @@ VECTARA_API_KEY
 This variable should contain a single API key that provides authentication to Vectara for the corpus specified (or corpora if more than 1 is listed). This Vectara API key should have query permission.
 ```
 
-### Optional configuration
+VECTARA_CONNECTOR_API_KEY
 
-```
-VECTARA_CONNECTOR_FIELDS_MAPPING
+This variable should contain the API key for the Cohere connector.
 
-This variable may contain a JSON object mapping Vectara fields
-to Cohere fields(key is Vectara field, value is Cohere field).
-If it is not set, the response fields will be returned as is.
 ```
 
 A `.env-template` file is provided as a reference.
@@ -58,12 +54,13 @@ Then start the server
 and check with curl to see that everything is working
 
 ```bash
-  $ curl --request POST \
-    --url http://localhost:5000/search \
-    --header 'Content-Type: application/json' \
-    --data '{
-    "query": "stainless propane griddle"
-  }'
+  $ curl --request POST \  
+    --url http://localhost:5000/search \  
+    --header 'Content-Type: application/json' \  
+    --header 'Authorization: Bearer <CONNECTOR_API_KEY>' \  
+    --data '{  
+      "query": "is light a wave or particle?"  
+    }'  
 ```
 
 Alternatively, load up the Swagger UI and try out the API from a browser: http://localhost:5000/ui/

@@ -12,6 +12,32 @@ END_SNIPPET = "<%END%>"
 def _remove_snippet(s: str) -> str:
     return s.replace(START_SNIPPET, "").replace(END_SNIPPET, "")
 
+def send_request(config: dict, data: dict) -> dict:
+    headers = {
+        "x-api-key": config.api_key,
+        "customer-id": config.customer_id,
+        "Content-Type": "application/json",
+        "X-Source": "cohere-connect",
+    }
+
+    response = requests.post(
+        headers=headers,
+        url="https://api.vectara.io/v1/query",
+        data=json.dumps(data),
+        timeout=config.timeout,
+    )
+
+    if response.status_code != 200:
+        logger.error(
+            "Query failed %s",
+            f"(code {response.status_code}, reason {response.reason}, details "
+            f"{response.text})",
+        )
+        return []
+
+    result = response.json()
+    return result
+
 def vectara_query(
     query: str,
     config: dict,
@@ -55,30 +81,7 @@ def vectara_query(
             "mmrConfig": {"diversityBias": config.mmr_diversity_bias},
         }
 
-    headers = {
-        "x-api-key": config.api_key,
-        "customer-id": config.customer_id,
-        "Content-Type": "application/json",
-        "X-Source": "cohere-connect",
-    }
-
-
-    response = requests.post(
-        headers=headers,
-        url="https://api.vectara.io/v1/query",
-        data=json.dumps(data),
-        timeout=config.timeout,
-    )
-
-    if response.status_code != 200:
-        logger.error(
-            "Query failed %s",
-            f"(code {response.status_code}, reason {response.reason}, details "
-            f"{response.text})",
-        )
-        return []
-
-    result = response.json()
+    result = send_request(config, data)
 
     responses = result["responseSet"][0]["response"]
     documents = result["responseSet"][0]["document"]
