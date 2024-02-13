@@ -8,6 +8,7 @@ from . import UpstreamProviderError, provider
 
 logger = logging.getLogger(__name__)
 
+
 def search(body):
     logger.debug(f'Search request: {body["query"]}')
 
