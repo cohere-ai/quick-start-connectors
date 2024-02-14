@@ -1,47 +1,25 @@
 import logging
-from flask import current_app as app
+from flask import abort, current_app as app
 from connexion.exceptions import Unauthorized
+
+from . import UpstreamProviderError, provider
 
 logger = logging.getLogger(__name__)
 
 
-# This function is run for the /search endpoint
-# the results that are returned here will be passed to Cohere's model for RAG
 def search(body):
+    """
+    Entrypoint for the /search endpoint. Most of the search
+    logic should be in provider.search
+    """
     logger.debug(f'Search request: {body["query"]}')
 
-    # the final data can include anything but must be a flat dictionary with string keys and string values
-    # we also recommend that you include:
-    #   - an id field that uniquely identifies the data
-    #   - a text field that contains the bulk of your textual data
-    #   - a title field that describes the data
-    #   - a url field that points to the source of the data
-    data = [
-        {
-            "id": "1",
-            "title": "Tall penguins",
-            "text": "The tallest penguin is the Emperor penguin",
-            "url": "https://en.wikipedia.org/wiki/Penguin",
-        },
-        {
-            "id": "2",
-            "title": "Emperor penguins",
-            "text": "The latin name for Emperor penguin is Aptenodytes forsteri",
-            "url": "https://en.wikipedia.org/wiki/Penguin",
-        },
-        {
-            "id": "3",
-            "title": "Small penguins",
-            "text": "The smallest penguin is the fairy penguin",
-            "url": "https://en.wikipedia.org/wiki/Penguin",
-        },
-        {
-            "id": "4",
-            "title": "Eudyptula penguis",
-            "text": "The latin name for fairy penguin is Eudyptula minor",
-            "url": "https://en.wikipedia.org/wiki/Penguin",
-        },
-    ]
+    try:
+        data = provider.search(body["query"])
+        logger.info(f"Found {len(data)} results")
+    except UpstreamProviderError as error:
+        logger.error(f"Upstream search error: {error.message}")
+        abort(502, error.message)
 
     return {"results": data}, 200, {"X-Connector-Id": app.config.get("APP_ID")}
 

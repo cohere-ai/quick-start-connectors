@@ -19,7 +19,7 @@ class UpstreamProviderError(Exception):
 
 
 def create_app() -> connexion.FlaskApp:
-    # use connexion to create a flask app with the endpoints defined in api.yaml spec
+    # use connexion to create a Flask app with the endpoints defined in api.yaml spec
     app = connexion.FlaskApp(__name__, specification_dir="../../.openapi")
     app.add_api(
         API_VERSION, resolver=connexion.resolver.RelativeResolver("provider.app")
