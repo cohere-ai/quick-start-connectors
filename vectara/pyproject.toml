@@ -1,0 +1,20 @@
+[tool.poetry]
+name = "vectara"
+version = "0.1.0"
+description = ""
+authors = ["Ofer M <ofer@vectara.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.11"
+flask = "2.2.5"
+connexion = {extras = ["swagger-ui"], version = "^2.14.2"}
+requests = "^2.31.0"
+python-dotenv = "^1.0.0"
+gunicorn = "^21.2.0"
+dictdot = "^1.5.1"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
