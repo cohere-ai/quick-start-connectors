@@ -3,6 +3,7 @@ import aiohttp
 import base64
 import functools
 import logging
+import re
 import requests
 import sys
 
@@ -109,7 +110,10 @@ class ConfluenceClient:
     def search_pages(self, query):
         search_url = f"{self.base_url}/wiki/rest/api/content/search"
 
-        params = {"cql": f"text ~ {query}", "limit": self.search_limit}
+        params = {
+            "cql": f'text ~ "%s"' % re.sub("\W+", " ", query),
+            "limit": self.search_limit,
+        }
 
         response = requests.get(
             search_url,
