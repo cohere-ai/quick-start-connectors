@@ -96,10 +96,12 @@ class ConfluenceClient:
 
             content = await response.json()
 
+            page_url = f"{self.base_url}/wiki{content['_links']['webui']}"
+
             serialized_page = {
                 "title": content["title"],
                 "text": content["body"][self.PAGE_BODY_FORMAT]["value"],
-                "url": get_page_by_id_url,
+                "url": page_url,
             }
 
             # Update cache
