@@ -16,7 +16,7 @@ boto3 = "1.28.26"
 backoff = "^2.2.1"
 
 [tool.poetry.group.development.dependencies]
-black = "^23.7.0"
+black = ">=23.7,<25.0"
 types-requests = "^2.31.0.1"
 
 [build-system]
