@@ -13,7 +13,7 @@ connexion = { extras = ["swagger-ui"], version = "^2.14.2" }
 python-dotenv = "^1.0.0"
 gunicorn = "^21.2.0"
 asyncio = "^3.4.3"
-black = "^23.11.0"
+black = "^24.3.0"
 aiohttp = "^3.9.3"
 
 
