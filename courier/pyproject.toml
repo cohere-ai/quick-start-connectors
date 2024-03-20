@@ -17,7 +17,7 @@ trycourier = "^5.0.0"
 
 
 [tool.poetry.group.development.dependencies]
-black = "^23.7.0"
+black = "^24.3.0"
 types-requests = "^2.31.0.1"
 
 [build-system]
