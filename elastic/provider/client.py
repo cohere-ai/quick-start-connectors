@@ -1,3 +1,4 @@
+import cohere
 from elasticsearch import Elasticsearch
 from flask import current_app as app
 
@@ -7,7 +8,9 @@ client = None
 
 
 class ElasticsearchClient:
-    def __init__(self, connection_params=None, index=None, search_limit=10):
+    def __init__(
+        self, connection_params=None, index=None, search_limit=10, search_type=None
+    ):
         if not connection_params:
             raise ValueError(
                 "No connection parameters provided to the Elasticsearch "
@@ -23,7 +26,28 @@ class ElasticsearchClient:
         self.index = index
         self.search_limit = search_limit
 
+        self.do_vector = False
+        if search_type == "vector":
+            assert (
+                "embedding"
+                in self.client.indices.get(index=index)[index]["mappings"]["properties"]
+            ), f"Supplied index, {index}, is not a vector index"
+
+            if api_key := app.config.get("COHERE_API_KEY"):
+                self.co = cohere.Client(api_key=api_key)
+            else:
+                raise ValueError(
+                    "If doing vector search, a Cohere API key must be provided."
+                )
+
+            self.do_vector = True
+
     def search(self, query):
+        if self.do_vector:
+            return self.vector_search(query)
+        return self.default_search(query)
+
+    def default_search(self, query):
         es_query_body = {
             "query": {"multi_match": {"query": query}},
             "highlight": {
@@ -43,6 +67,32 @@ class ElasticsearchClient:
             )
 
         return response["hits"]["hits"]
+
+    def vector_search(self, query):
+        response = self.client.search(
+            index=self.index,
+            knn={
+                "field": "embedding",
+                "query_vector": self.get_query_embedding(query),
+                "num_candidates": 50,
+                "k": 10,
+            },
+            size=self.search_limit,
+        )
+
+        if response.get("hits", {}).get("hits") is None:
+            raise UpstreamProviderError(
+                "Error while searching Elasticsearch with " f"query: '{query}'."
+            )
+
+        return response["hits"]["hits"]
+
+    def get_query_embedding(self, query):
+        r = self.co.embed(
+            texts=[query], model="embed-english-v3.0", input_type="search_query"
+        )
+
+        return r.embeddings[0]
 
 
 def get_client():
@@ -77,6 +127,10 @@ def get_client():
         assert (index := app.config.get("INDEX")), "ELASTIC_INDEX must be set"
         search_limit = app.config.get("SEARCH_LIMIT", 10)
 
-        client = ElasticsearchClient(connection_params, index, search_limit)
+        search_type = app.config.get("SEARCH_TYPE")
+
+        client = ElasticsearchClient(
+            connection_params, index, search_limit, search_type
+        )
 
     return client
