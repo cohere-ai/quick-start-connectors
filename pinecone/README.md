@@ -39,13 +39,6 @@ PINECONE_API_KEY
 This variable should contain the API key for Pinecone.
 Use these [instructions](https://docs.pinecone.io/docs/authentication#finding-your-pinecone-api-key) to get the API key.
 
-```
-PINECONE_ENVIRONMENT
-```
-
-This variable should contain the environment name for Pinecone.
-Use these [instructions](https://docs.pinecone.io/docs/authentication#finding-your-pinecone-api-key) to get the
-environment name.
 
 ```
 PINECONE_INDEX
