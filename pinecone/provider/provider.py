@@ -44,6 +44,7 @@ def search(query):
     ), "PINECONE_COHERE_EMBED_MODEL must be set"
 
     cohere_client = get_cohere_client(cohere_api_key)
+    # Pulling just the query embedding vector
     xq = cohere_client.get_embeddings(query, cohere_embed_model)[0]
 
     pinecone_client = get_pinecone_client(api_key, index)
