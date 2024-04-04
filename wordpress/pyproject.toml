@@ -18,7 +18,7 @@ beautifulsoup4 = "^4.12.2"
 
 
 [tool.poetry.group.development.dependencies]
-black = "^23.7.0"
+black = "^24.3.0"
 mypy = "^1.4.1"
 
 [build-system]
