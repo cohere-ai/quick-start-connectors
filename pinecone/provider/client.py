@@ -15,7 +15,10 @@ class PineconeClient:
         self.index = self.client.Index(index)
 
     def query(self, query, top_k=100, include_metadata=True):
-        return self.index.query(vector=query, top_k=top_k, include_metadata=include_metadata)
+        return self.index.query(
+            vector=query, top_k=top_k, include_metadata=include_metadata
+        )
+
 
 class CohereClient:
     def __init__(self, cohere_api_key):
