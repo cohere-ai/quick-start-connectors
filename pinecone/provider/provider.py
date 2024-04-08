@@ -50,9 +50,6 @@ def search(query):
     pinecone_client = get_pinecone_client(api_key, index)
 
     search_limit = app.config.get("SEARCH_LIMIT", 100)
-    # Adding this because if search_limit is not set in env variables, it will be an empty string
-    if type(search_limit) is not int:
-        search_limit = 100
 
     pinecone_results = pinecone_client.query(xq, search_limit)
 
