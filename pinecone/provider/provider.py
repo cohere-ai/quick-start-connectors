@@ -35,9 +35,6 @@ def serialize_results(data, mappings={}):
 
 def search(query):
     assert (api_key := app.config.get("API_KEY")), "PINECONE_API_KEY must be set"
-    assert (
-        environment := app.config.get("ENVIRONMENT")
-    ), "PINECONE_ENVIRONMENT must be set"
     assert (index := app.config.get("INDEX")), "PINECONE_INDEX must be set"
     assert (
         cohere_api_key := app.config.get("COHERE_API_KEY")
@@ -47,11 +44,13 @@ def search(query):
     ), "PINECONE_COHERE_EMBED_MODEL must be set"
 
     cohere_client = get_cohere_client(cohere_api_key)
-    xq = cohere_client.get_embeddings(query, cohere_embed_model)
+    # Pulling just the query embedding vector
+    xq = cohere_client.get_embeddings(query, cohere_embed_model)[0]
 
-    pinecone_client = get_pinecone_client(api_key, environment, index)
+    pinecone_client = get_pinecone_client(api_key, index)
 
     search_limit = app.config.get("SEARCH_LIMIT", 100)
+
     pinecone_results = pinecone_client.query(xq, search_limit)
 
     results = [

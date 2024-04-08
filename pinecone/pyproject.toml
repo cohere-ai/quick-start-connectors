@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.11"
 flask = "2.2.5"
 connexion = {extras = ["swagger-ui"], version = "^2.14.2"}
-pinecone-client = "^2.2.4"
+pinecone-client = "^3.2.2"
 python-dotenv = "^1.0.0"
 black = "^24.3.0"
 cohere = "^4.34"
