@@ -11,7 +11,7 @@ flask = "2.2.5"
 connexion = {extras = ["swagger-ui"], version = "^2.14.2"}
 python-dotenv = "^1.0.0"
 pymongo = "4.4.1"
-gunicorn = "^21.2.0"
+gunicorn = "^22.0.0"
 
 [tool.poetry.group.development.dependencies]
 black = "^24.3.0"
