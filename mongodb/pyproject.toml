@@ -10,7 +10,7 @@ python = "^3.11"
 flask = "2.2.5"
 connexion = {extras = ["swagger-ui"], version = "^2.14.2"}
 python-dotenv = "^1.0.0"
-pymongo = "4.4.1"
+pymongo = "4.6.3"
 gunicorn = "^22.0.0"
 
 [tool.poetry.group.development.dependencies]
