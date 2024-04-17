@@ -10,7 +10,7 @@ python = "^3.11"
 connexion = {version = "2.14.2", extras = ["swagger-ui"]}
 python-dotenv = "^1.0.0"
 flask = "2.2.5"
-gunicorn = "^21.2.0"
+gunicorn = "^22.0.0"
 redis = "^5.0.1"
 
 [tool.pytest.ini_options]
