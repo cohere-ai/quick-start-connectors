@@ -12,7 +12,7 @@ connexion = {extras = ["swagger-ui"], version = "^2.14.2"}
 python-dotenv = "^1.0.0"
 cohere = "^4.38"
 pymilvus = "^2.3.4"
-gunicorn = "^21.2.0"
+gunicorn = "^22.0.0"
 
 
 [tool.poetry.group.dev.dependencies]
