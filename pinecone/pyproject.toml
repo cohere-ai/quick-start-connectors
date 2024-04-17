@@ -13,7 +13,7 @@ pinecone-client = "^3.2.2"
 python-dotenv = "^1.0.0"
 black = "^24.3.0"
 cohere = "^4.34"
-gunicorn = "^21.2.0"
+gunicorn = "^22.0.0"
 
 
 [build-system]
