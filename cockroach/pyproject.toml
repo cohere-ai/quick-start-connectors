@@ -10,7 +10,7 @@ python = "^3.11"
 flask = "2.2.5"
 connexion = {extras = ["swagger-ui"], version = "^2.14.2"}
 python-dotenv = "^1.0.0"
-gunicorn = "^21.2.0"
+gunicorn = "^22.0.0"
 black = "^24.3.0"
 psycopg2 = "^2.9.9"
 
