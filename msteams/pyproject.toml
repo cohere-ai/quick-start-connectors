@@ -11,7 +11,7 @@ flask = "2.2.5"
 python-dotenv = "1.0.0"
 connexion = {extras = ["swagger-ui"], version = "^2.14.2"}
 msal = "^1.25.0"
-gunicorn = "^21.2.0"
+gunicorn = "^22.0.0"
 requests = "^2.31.0"
 beautifulsoup4 = "^4.12.2"
 unstructured-client = "^0.14.3"
