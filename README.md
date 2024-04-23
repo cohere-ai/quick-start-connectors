@@ -1,3 +1,5 @@
+![Cohere](banner.png)
+
 **Quick Start Connectors**
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-green.svg)](https://opensource.org/licenses/MIT)
@@ -46,10 +48,10 @@ After configuring the `.env`, you will be able to use `poetry`'s CLI to start a 
 
 # Pre-commits
 
-It is recommended to use the pre-commits defined that will automatically lint your files. You can run a 
+It is recommended to use the pre-commits defined that will automatically lint your files. You can run a
 `pip install pre-commit`
 
-and 
+and
 
 `pre-commit install` within the root folder. Now your prior to committing your files will be automatically linted. Currently, the pre-commit will run black (pinned to 24.1.1).
 
