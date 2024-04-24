@@ -49,7 +49,7 @@ def get_client():
     limit = app.config.get("SEARCH_LIMIT", 20)
     mapping = app.config.get("FIELDS_MAPPING", {})
     content_type = app.config.get("CONTENT_TYPE_SEARCH", None)
-    richtext_fields = app.config.get("RICHTEXT_FIELDS", ["content"])
+    richtext_fields = app.config.get("RICHTEXT_FIELDS", '["content"]')
 
     if not client:
         client = ContentfulApiClient(
