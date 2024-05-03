@@ -8,7 +8,14 @@ PREVIEW_API_URL = "preview.contentful.com"
 
 class ContentfulApiClient(Client):
     def __init__(
-        self, space_id, access_token, environment, content_type, mapping, search_limit
+        self,
+        space_id,
+        access_token,
+        environment,
+        content_type,
+        richtext_fields,
+        mapping,
+        search_limit,
     ):
         super().__init__(
             space_id,
@@ -22,6 +29,7 @@ class ContentfulApiClient(Client):
         self.content_type = content_type
         self.mapping = mapping
         self.search_limit = search_limit
+        self.richtext_fields = richtext_fields
 
     def get_search_limit(self):
         return self.search_limit
@@ -31,6 +39,9 @@ class ContentfulApiClient(Client):
 
     def get_mapping(self):
         return self.mapping
+
+    def get_richtext_fields(self):
+        return self.richtext_fields
 
 
 def get_client():
@@ -45,10 +56,17 @@ def get_client():
     limit = app.config.get("SEARCH_LIMIT", 20)
     mapping = app.config.get("FIELDS_MAPPING", {})
     content_type = app.config.get("CONTENT_TYPE_SEARCH", None)
+    richtext_fields = app.config.get("RICHTEXT_FIELDS", '["content"]')
 
     if not client:
         client = ContentfulApiClient(
-            space_id, access_token, environment, content_type, mapping, limit
+            space_id,
+            access_token,
+            environment,
+            content_type,
+            richtext_fields,
+            mapping,
+            limit,
         )
 
     return client

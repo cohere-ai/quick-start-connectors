@@ -17,15 +17,17 @@ def process_content(node):
     return str(node)
 
 
-def serialize_results(results, mapping):
+def serialize_results(results, mapping, richtext_fields):
     data = []
     for result in results:
         item = {"content_type": result.content_type.id, "id": result.id}
         for key, value in result.fields().items():
             item[key] = str(value)
-            if key == "content":
-                item[key] = process_content(value)
             type_key = f"{result.content_type.id}.{key}"
+
+            if any(fieldId in richtext_fields for fieldId in [key, type_key]):
+                item[key] = process_content(value)
+
             if type_key in mapping:
                 item[mapping[type_key]] = item.pop(key)
 
@@ -42,4 +44,6 @@ def search(query):
         params["content_type"] = content_type
     results = client.entries(params)
 
-    return serialize_results(results.items, client.get_mapping())
+    return serialize_results(
+        results.items, client.get_mapping(), client.get_richtext_fields()
+    )

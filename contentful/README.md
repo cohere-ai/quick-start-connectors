@@ -76,6 +76,27 @@ for example:
 }
 ```
 
+```
+CONTENTFUL_RICHTEXT_FIELDS
+```
+
+This variable should contain a JSON array with the identifiers of the fields that are of type richtext to process this information before delivering it to Cohere. By default, the content (["content"]) field will be processed in all content types.
+
+```
+[
+  "contentful_content_type.contentful_field_id",
+  "contentful_field_id",
+  ...
+]
+
+for example:
+
+[
+    "pageBlogPost.description",
+    "content",
+]
+```
+
 ## Development
 
 Create a virtual environment and install dependencies with poetry. We recommend using in-project virtual environments:
