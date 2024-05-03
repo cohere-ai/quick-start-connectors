@@ -44,4 +44,6 @@ def search(query):
         params["content_type"] = content_type
     results = client.entries(params)
 
-    return serialize_results(results.items, client.get_mapping(), client.get_richtext_fields())
+    return serialize_results(
+        results.items, client.get_mapping(), client.get_richtext_fields()
+    )

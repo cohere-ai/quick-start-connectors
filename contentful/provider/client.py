@@ -8,7 +8,14 @@ PREVIEW_API_URL = "preview.contentful.com"
 
 class ContentfulApiClient(Client):
     def __init__(
-        self, space_id, access_token, environment, content_type, richtext_fields, mapping, search_limit
+        self,
+        space_id,
+        access_token,
+        environment,
+        content_type,
+        richtext_fields,
+        mapping,
+        search_limit,
     ):
         super().__init__(
             space_id,
@@ -53,7 +60,13 @@ def get_client():
 
     if not client:
         client = ContentfulApiClient(
-            space_id, access_token, environment, content_type, richtext_fields, mapping, limit
+            space_id,
+            access_token,
+            environment,
+            content_type,
+            richtext_fields,
+            mapping,
+            limit,
         )
 
     return client
