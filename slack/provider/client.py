@@ -19,7 +19,7 @@ class SlackClient:
 
 
 def get_client():
-    api_key = app.config.get("CONNECTOR_API_KEY", "")
+    api_key = str(app.config.get("CONNECTOR_API_KEY", ""))
     api_token = None
     if api_key == "":
         api_token = get_access_token()

@@ -26,7 +26,7 @@ def search(body):
 
 # This function is run for all endpoints to ensure requests are using a valid API key
 def apikey_auth(token):
-    if token != app.config.get("CONNECTOR_API_KEY"):
+    if token != str(app.config.get("CONNECTOR_API_KEY")):
         raise Unauthorized()
     # successfully authenticated
     return {}
