@@ -1,0 +1,21 @@
+version: '3.8'
+services:
+  adb-free:
+    image: ghcr.io/oracle/adb-free:latest
+    ports:
+      - "1521:1522"
+      - "1522:1522"
+      - "8443:8443"
+      - "27017:27017"
+    environment:
+      .env
+    cap_add:
+      - SYS_ADMIN
+    devices:
+      - "/dev/fuse"
+    networks: 
+      - adbs-network
+
+networks:
+  adbs-network:
+    driver: bridge
