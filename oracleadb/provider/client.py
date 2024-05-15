@@ -93,8 +93,6 @@ class ADBSClient:
 
         cursor = self.connection.cursor()
 
-        print(query_preprocessed)
-
         response = cursor.execute(sql_query, {'query_value': query_preprocessed})
 
         columns = [desc[0] for desc in cursor.description]
@@ -126,8 +124,6 @@ class ADBSClient:
                 contains_clauses = contains_clauses +  f" OR CONTAINS({column}, :query_value, {i+1}) > 0"
 
         sql_query = sql_query + contains_clauses
-
-        print(sql_query)
 
         return sql_query
 

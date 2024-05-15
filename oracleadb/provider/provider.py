@@ -17,4 +17,3 @@ def search(query):
     db_rag_output = adbs_client.search(query)
 
     return db_rag_output
-
