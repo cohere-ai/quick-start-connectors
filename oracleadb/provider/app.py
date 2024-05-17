@@ -22,3 +22,4 @@ def apikey_auth(token):
     if api_key != "" and token != api_key:
         raise Unauthorized()
     return {}
+
