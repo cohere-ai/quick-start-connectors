@@ -9,28 +9,28 @@ load_dotenv()
 
 
 #Testing Wallet and Config Dir Setup
-def test_wallet_and_config_dir_setup():
-    wallet_location = os.getenv("ORACLE_WALLET_DIR")
-    config_location = os.getenv("ORACLE_CONFIG_DIR")
-    wallet_files = os.listdir(wallet_location)
-    config_files = os.listdir(config_location)
-    assert 'cwallet.sso' in wallet_files
-    assert 'tnsnames.ora' in config_files
+# def test_wallet_and_config_dir_setup():
+#     wallet_location = os.getenv("ORACLE_WALLET_DIR")
+#     config_location = os.getenv("ORACLE_CONFIG_DIR")
+#     wallet_files = os.listdir(wallet_location)
+#     config_files = os.listdir(config_location)
+#     assert 'cwallet.sso' in wallet_files
+#     assert 'tnsnames.ora' in config_files
 
 #Test End to End Functionality
 def test_end_to_end():
 
     #Create a DB Connection
-    dsn = os.getenv("ORACLE_DSN")
-    user = os.getenv("ORACLE_USER")
-    password = os.getenv("ORACLE_PASSWORD")
-    config_dir = os.getenv("ORACLE_CONFIG_DIR")
-    wallet_dir = os.getenv("ORACLE_WALLET_DIR")
-    wallet_password = os.getenv("ORACLE_WALLET_PASSWORD")
-    fts_columns = os.getenv("ORACLE_FTS_COLUMNS").split(",")
-    table_name = os.getenv("ORACLE_TABLE_NAME")
-    auto_index_fts_columns = os.getenv("ORACLE_AUTO_INDEX_FTS_COLUMNS")
+    dsn = os.getenv("ORACLEADB_DSN")
+    user = os.getenv("ORACLEADB_USER")
+    password = os.getenv("ORACLEADB_PASSWORD")
+    wallet_dir = os.getenv("ORACLEADB_WALLET_DIR")
+    wallet_password = os.getenv("ORACLEADB_WALLET_PASSWORD")
+    fts_columns = os.getenv("ORACLEADB_FTS_COLUMN_LIST")
+    table_name = os.getenv("ORACLEADB_TABLE_NAME")
+    auto_index_fts_columns = os.getenv("ORACLEADB_AUTO_INDEX_FTS_COLUMNS")
 
+    print(" =========== " + dsn)
 
     create_table_sql = """
             CREATE TABLE EMPLOYEE (
@@ -51,8 +51,7 @@ def test_end_to_end():
     client = ADBSClient(
                         user=user, 
                         password=password, 
-                        dsn=dsn, 
-                        config_dir=config_dir, 
+                        dsn=dsn,
                         wallet_dir=wallet_dir, 
                         wallet_password=wallet_password,
                         fts_columns = fts_columns,
@@ -64,7 +63,7 @@ def test_end_to_end():
 
     cursor = connection.cursor()
 
-    # Execute the create table SQL
+    # # Execute the create table SQL
     cursor.execute(create_table_sql)
     
     # Insert data into the EMPLOYEE table

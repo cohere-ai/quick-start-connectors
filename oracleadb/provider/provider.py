@@ -1,10 +1,4 @@
 import logging
-import os
-import oracledb
-from flask import current_app as app
-import time
-
-import sys
 from .client import get_client
 
 logger = logging.getLogger(__name__)

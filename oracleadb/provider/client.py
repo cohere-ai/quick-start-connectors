@@ -36,6 +36,7 @@ class ADBSClient:
         except: 
             raise UpstreamProviderError("Error connecting to Oracle Database")
 
+        self.user = user
         self.table_name = table_name
         self.fts_columns = fts_columns.split(",")
         self.auto_index_fts_columns = auto_index_fts_columns
@@ -46,6 +47,7 @@ class ADBSClient:
 
             for column in fts_columns:
                 self._prepare_fts_index(column)
+                print('prepared index for column ', column)
     
     def _create_index_configuration(self):
         cursor = self.connection.cursor()
@@ -69,10 +71,11 @@ class ADBSClient:
     def _prepare_fts_index(self, column):
         cursor = self.connection.cursor()
 
-        create_index = f""" 
-            create index {column + "_fts_index"} on {self.table_name}({column}) indextype is ctxsys.context parameters ('Wordlist ADMIN.STEM_FUZZY_PREF')
+        create_index = f"""
+            create index {column + "_fts_index"} on {self.table_name}({column}) indextype is ctxsys.context parameters ('Wordlist {self.user}.STEM_FUZZY_PREF')
         """
 
+        print(create_index)
         cursor.execute(create_index)
 
         self.connection.commit()
@@ -104,7 +107,7 @@ class ADBSClient:
                     value = value.read()
                 processed_row[columns[idx]] = value
             results.append(processed_row)
-        return results 
+        return results
 
     def create_sql_query(self, fts_columns, table_name):
         
@@ -141,22 +144,19 @@ class ADBSClient:
 def get_client():
     global client
     if not client:
-        assert (host := app.config.get("HOST")), "ORACLE HOST must be set"
         assert (user := app.config.get("USER")), "USER must be set"
         assert (password := app.config.get("PASSWORD")), "PASSWORD must be set"
         assert (dsn := app.config.get("DSN")), "DSN must be set"
         assert (table_name := app.config.get("TABLE_NAME")), "TABLE_NAME must be set"
         assert (wallet_dir := app.config.get("WALLET_DIR")), "WALLET_DIR must be set"
         assert (wallet_password := app.config.get("WALLET_PASSWORD")), "WALLET_PASSWORD must be set"
-        assert (fts_column := app.config.get("FTS_COLUMNS")), "FTS_COLUMNS must be set"
+        assert (fts_column := app.config.get("FTS_COLUMN_LIST")), "FTS_COLUMNS must be set"
         assert (auto_index_fts_columns := app.config.get("AUTO_INDEX_FTS_COLUMNS")), "AUTO_INDEX_FTS_COLUMNS must be set"
-        assert (config_dir := app.config.get("CONFIG_DIR")), "CONFIG_DIR must be set"
 
         client = ADBSClient(
             user,
             password,
             dsn,
-            config_dir,
             wallet_dir,
             wallet_password,
             fts_column,
