@@ -20,19 +20,17 @@ class ADBSClient:
         user,
         password,
         dsn,
-        config_dir,
-        wallet_dir, 
-        wallet_password,
         fts_columns,
         table_name,
-        auto_index_fts_columns
+        auto_index_fts_columns,
+        wallet_dir=None, 
+        wallet_password=None,
     ):
         try:
             self.connection = oracledb.connect(
                         user=user, 
-                        password=password, 
-                        dsn=dsn, 
-                        config_dir=config_dir, 
+                        password=password,
+                        dsn=dsn,
                         wallet_location=wallet_dir, 
                         wallet_password=wallet_password)
         except: 
