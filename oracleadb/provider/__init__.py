@@ -29,3 +29,4 @@ def create_app() -> connexion.FlaskApp:
     flask_app.config.from_prefixed_env(config_prefix)
     flask_app.config["APP_ID"] = config_prefix
     return flask_app
+
