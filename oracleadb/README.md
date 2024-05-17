@@ -64,20 +64,23 @@ ORACLEADB_CONNECTOR_API_KEY=
 
 ## Development
 
-Create a ``` .env ``` file with the following fields (refer .env-sample)
+Create a ``` .env ``` file with the following fields (refer .env-template)
 
 ```
-##Connection specific vars##
-ORACLEADB_USER=admin
-ORACLEADB_PASSWORD=Adm_password1
-ORACLEADB_DSN=my_adw_high
-ORACLEADB_WALLET_LOCATION=/scratch/tls_wallet
-ORACLEADB_WALLET_PASSWORD=Wall_password1
+##Connection Env Vars##
+ORACLEADB_USER=admin 
+ORACLEADB_PASSWORD=Adm_password1 
+ORACLEADB_DSN=(description= (retry_count=20)(retry_delay=3)(address=(protocol=tcps)(port=1521)(host=adb.example.oraclecloud.com))(connect_data=(service_name=example_high.adb.oraclecloud.com))(security=(ssl_server_dn_match=yes)))
+ORACLEADB_CONNECTION_TYPE=mTLS
+ORACLEADB_WALLET_LOCATION=downloaded_wallet_location 
+ORACLEADB_WALLET_PASSWORD=downloaded_wallet_password
 
-##Plugin Specific Keys##
+##Plugin Specific Env Vars##
 ORACLEADB_TABLE_NAME=employee
+ORACLEADB_FTS_COLUMN=employee_reviews, technical_feedback ORACLEADB_AUTO_INDEX_FTS_COLUMNS=True
+ORACLEADB_CONNECTOR_API_KEY=
 
-##For Local Docker Develpment##
+##For Local Docker Development##
 WALLET_PASSWORD=Wall_password1
 ADMIN_PASSWORD=Adm_password1
 WORKLOAD_TYPE=ADW
