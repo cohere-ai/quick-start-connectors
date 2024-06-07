@@ -23,16 +23,26 @@ class ADBSClient:
         fts_columns,
         table_name,
         auto_index_fts_columns,
-        wallet_dir=None, 
-        wallet_password=None,
+        connection_type,
+        wallet_dir, 
+        wallet_password,
     ):
         try:
-            self.connection = oracledb.connect(
-                        user=user, 
-                        password=password,
-                        dsn=dsn,
-                        wallet_location=wallet_dir, 
-                        wallet_password=wallet_password)
+            if (connection_type == 'mTLS'):
+                self.connection = oracledb.connect(
+                                            user=user, 
+                                            password=password,
+                                            dsn=dsn,
+                                            wallet_location=wallet_dir,
+                                            wallet_password=wallet_password
+                                )
+            else:
+                #for only TLS
+                self.connection = oracledb.connect(
+                                            user=user,
+                                            password=password,
+                                            dsn=dsn                                                             
+                                )
         except: 
             raise UpstreamProviderError("Error connecting to Oracle Database")
 
@@ -52,14 +62,14 @@ class ADBSClient:
     def _create_index_configuration(self):
         cursor = self.connection.cursor()
 
-        indexing_properties = """
+        indexing_properties = f"""
             begin 
-                ctx_ddl.create_preference('STEM_FUZZY_PREF', 'BASIC_WORDLIST'); 
-                ctx_ddl.set_attribute('STEM_FUZZY_PREF','FUZZY_MATCH','ENGLISH');
-                ctx_ddl.set_attribute('STEM_FUZZY_PREF','FUZZY_SCORE','1');
-                ctx_ddl.set_attribute('STEM_FUZZY_PREF','FUZZY_NUMRESULTS','5000');
-                ctx_ddl.set_attribute('STEM_FUZZY_PREF','SUBSTRING_INDEX','TRUE');
-                ctx_ddl.set_attribute('STEM_FUZZY_PREF','STEMMER','ENGLISH');
+                ctx_ddl.create_preference('{self.table_name}_STEM_FUZZY_PREF', 'BASIC_WORDLIST'); 
+                ctx_ddl.set_attribute('{self.table_name}_STEM_FUZZY_PREF','FUZZY_MATCH','ENGLISH');
+                ctx_ddl.set_attribute('{self.table_name}_STEM_FUZZY_PREF','FUZZY_SCORE','1');
+                ctx_ddl.set_attribute('{self.table_name}_STEM_FUZZY_PREF','FUZZY_NUMRESULTS','5000');
+                ctx_ddl.set_attribute('{self.table_name}_STEM_FUZZY_PREF','SUBSTRING_INDEX','TRUE');
+                ctx_ddl.set_attribute('{self.table_name}_STEM_FUZZY_PREF','STEMMER','ENGLISH');
             end;
         """
 
@@ -72,10 +82,9 @@ class ADBSClient:
         cursor = self.connection.cursor()
 
         create_index = f"""
-            create index {column + "_fts_index"} on {self.table_name}({column}) indextype is ctxsys.context parameters ('Wordlist {self.user}.STEM_FUZZY_PREF')
+            create index {self.table_name + "_" + column + "_fts_index"} on {self.table_name}({column}) indextype is ctxsys.context parameters ('Wordlist {self.user}.{self.table_name}_STEM_FUZZY_PREF')
         """
 
-        print(create_index)
         cursor.execute(create_index)
 
         self.connection.commit()
@@ -107,6 +116,8 @@ class ADBSClient:
                     value = value.read()
                 processed_row[columns[idx]] = value
             results.append(processed_row)
+
+        print(results)
         return results
 
     def create_sql_query(self, fts_columns, table_name):
@@ -148,20 +159,22 @@ def get_client():
         assert (password := app.config.get("PASSWORD")), "PASSWORD must be set"
         assert (dsn := app.config.get("DSN")), "DSN must be set"
         assert (table_name := app.config.get("TABLE_NAME")), "TABLE_NAME must be set"
-        assert (wallet_dir := app.config.get("WALLET_DIR")), "WALLET_DIR must be set"
-        assert (wallet_password := app.config.get("WALLET_PASSWORD")), "WALLET_PASSWORD must be set"
-        assert (fts_column := app.config.get("FTS_COLUMN_LIST")), "FTS_COLUMNS must be set"
+        assert (wallet_dir := app.config.get("WALLET_DIR")), "WALLET_DIR must be set (None for TLS)"
+        assert (wallet_password := app.config.get("WALLET_PASSWORD")), "WALLET_PASSWORD must be set (None for TLS)"
+        assert (fts_columns := app.config.get("FTS_COLUMN_LIST")), "FTS_COLUMNS must be set"
         assert (auto_index_fts_columns := app.config.get("AUTO_INDEX_FTS_COLUMNS")), "AUTO_INDEX_FTS_COLUMNS must be set"
+        assert (connection_type := app.config.get("CONNECTION_TYPE")), "CONNECTION_TYPE musst be set, mTLS or TLS"
 
         client = ADBSClient(
             user,
             password,
             dsn,
-            wallet_dir,
-            wallet_password,
-            fts_column,
+            fts_columns,
             table_name,
-            auto_index_fts_columns
+            auto_index_fts_columns,
+            connection_type,
+            wallet_dir,
+            wallet_password
         )
         
     return client
