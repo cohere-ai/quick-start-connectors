@@ -2,7 +2,7 @@
 name = "gdrive"
 version = "0.1.0"
 description = ""
-authors = ["Eugene Pavletsov<eugene@lightsonsoftware.com>"]
+authors = ["Eugene Pavletsov <eugene@lightsonsoftware.com>"]
 readme = "README.md"
 
 [tool.poetry.dependencies]
