@@ -157,21 +157,20 @@ typing-extensions = ">=4.0.1"
 
 [[package]]
 name = "azure-identity"
-version = "1.10.0"
+version = "1.16.1"
 description = "Microsoft Azure Identity Library for Python"
 optional = false
-python-versions = ">=3.6"
+python-versions = ">=3.8"
 files = [
-    {file = "azure-identity-1.10.0.zip", hash = "sha256:656e5034d9cef297cf9b35376ed620085273c18cfa52cea4a625bf0d5d2d6409"},
-    {file = "azure_identity-1.10.0-py3-none-any.whl", hash = "sha256:b386f1ccbea6a48b9ab7e7f162adc456793c345193a7c1a713959562b08dcbbd"},
+    {file = "azure-identity-1.16.1.tar.gz", hash = "sha256:6d93f04468f240d59246d8afde3091494a5040d4f141cad0f49fc0c399d0d91e"},
+    {file = "azure_identity-1.16.1-py3-none-any.whl", hash = "sha256:8fb07c25642cd4ac422559a8b50d3e77f73dcc2bbfaba419d06d6c9d7cff6726"},
 ]
 
 [package.dependencies]
-azure-core = ">=1.11.0,<2.0.0"
+azure-core = ">=1.23.0"
 cryptography = ">=2.5"
-msal = ">=1.12.0,<2.0.0"
-msal-extensions = ">=0.3.0,<2.0.0"
-six = ">=1.12.0"
+msal = ">=1.24.0"
+msal-extensions = ">=0.3.0"
 
 [[package]]
 name = "black"
@@ -782,22 +781,22 @@ files = [
 
 [[package]]
 name = "msal"
-version = "1.22.0"
+version = "1.28.1"
 description = "The Microsoft Authentication Library (MSAL) for Python library enables your app to access the Microsoft Cloud by supporting authentication of users with Microsoft Azure Active Directory accounts (AAD) and Microsoft Accounts (MSA) using industry standard OAuth2 and OpenID Connect."
 optional = false
-python-versions = "*"
+python-versions = ">=3.7"
 files = [
-    {file = "msal-1.22.0-py2.py3-none-any.whl", hash = "sha256:9120b7eafdf061c92f7b3d744e5f325fca35873445fa8ffebb40b1086a13dd58"},
-    {file = "msal-1.22.0.tar.gz", hash = "sha256:8a82f5375642c1625c89058018430294c109440dce42ea667d466c2cab520acd"},
+    {file = "msal-1.28.1-py3-none-any.whl", hash = "sha256:563c2d70de77a2ca9786aab84cb4e133a38a6897e6676774edc23d610bfc9e7b"},
+    {file = "msal-1.28.1.tar.gz", hash = "sha256:d72bbfe2d5c2f2555f4bc6205be4450ddfd12976610dd9a16a9ab0f05c68b64d"},
 ]
 
 [package.dependencies]
-cryptography = ">=0.6,<43"
+cryptography = ">=2.5,<45"
 PyJWT = {version = ">=1.0.0,<3", extras = ["crypto"]}
 requests = ">=2.0.0,<3"
 
 [package.extras]
-broker = ["pymsalruntime (>=0.13.2,<0.14)"]
+broker = ["pymsalruntime (>=0.13.2,<0.17)"]
 
 [[package]]
 name = "msal-extensions"
@@ -1408,4 +1407,4 @@ multidict = ">=4.0"
 [metadata]
 lock-version = "2.0"
 python-versions = "^3.10"
-content-hash = "392f0ef5a15da6a465921940e290a10f70f570a8337a52eab164594d8bf1b1db"
+content-hash = "faccce47fbef6055eddf8e202b9ef5b1e10ca02e78fef23f184a5b6aff967a0c"
