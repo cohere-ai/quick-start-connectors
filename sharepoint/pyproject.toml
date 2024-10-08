@@ -9,7 +9,7 @@ readme = "README.md"
 python = "^3.10"
 flask = "2.2.5"
 azure-core = "1.23.1"
-azure-identity = "1.10.0"
+azure-identity = "1.16.1"
 python-dotenv = "1.0.0"
 msgraph-core = "0.2.2"
 connexion = {version = "2.14.2", extras = ["swagger-ui"]}
