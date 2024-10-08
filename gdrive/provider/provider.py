@@ -8,7 +8,7 @@ from google.oauth2.credentials import Credentials
 from googleapiclient.discovery import build
 from googleapiclient.errors import HttpError
 
-from . import UpstreamProviderError, async_download
+from . import UpstreamProviderError, async_download, cache
 
 CSV_MIMETYPE = "text/csv"
 TEXT_MIMETYPE = "text/plain"
@@ -29,14 +29,13 @@ logger = logging.getLogger(__name__)
 
 
 def process_data_with_service(data, request_credentials: Credentials):
-    results = []
+    results: list[dict] = []
     files = data.get("files", [])
     if not files:
         logger.debug("No files found.")
         return results
 
-    id_to_urls = extract_links(files)
-    id_to_texts = async_download.perform(id_to_urls, request_credentials.token)
+    id_to_texts = retrieve_file_texts(files, request_credentials)
 
     for _file in files:
         id = _file.get("id")
@@ -67,19 +66,39 @@ def process_data_with_service(data, request_credentials: Credentials):
     return results
 
 
-def extract_links(files) -> [str, str]:
-    id_to_urls = dict()
+def retrieve_file_texts(files, request_credentials: Credentials) -> dict[str, str]:
+    missing_ids_to_urls = {}
+    id_to_texts = {}
+
     for _file in files:
         export_links = _file.pop("exportLinks", {})
         id = _file.get("id")
+
         if id is None:
             continue
 
-        if TEXT_MIMETYPE in export_links:
-            id_to_urls[id] = export_links[TEXT_MIMETYPE]
-        elif CSV_MIMETYPE in export_links:
-            id_to_urls[id] = export_links[CSV_MIMETYPE]
-    return id_to_urls
+        cached_text = cache.get_document_text(id) if cache.backend else None
+
+        if cached_text is not None:
+            id_to_texts[id] = cached_text
+        else:
+            if TEXT_MIMETYPE in export_links:
+                missing_ids_to_urls[id] = export_links[TEXT_MIMETYPE]
+            elif CSV_MIMETYPE in export_links:
+                missing_ids_to_urls[id] = export_links[CSV_MIMETYPE]
+
+    if missing_ids_to_urls:
+        downloaded_texts = async_download.perform(
+            missing_ids_to_urls, request_credentials.token
+        )
+
+        if cache.backend:
+            for document_id in downloaded_texts:
+                cache.cache_document_text(document_id, downloaded_texts[document_id])
+
+        id_to_texts.update(downloaded_texts)
+
+    return id_to_texts
 
 
 def split_and_remove_stopwords(text: str):

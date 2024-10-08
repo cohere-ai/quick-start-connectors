@@ -81,6 +81,25 @@ This connector also supports a few optional environment variables to configure t
 1. `GDRIVE_SEARCH_LIMIT` - Number of results to return. Default is 10.
 2. `GDRIVE_FOLDER_ID` - ID of the folder to search in. If not provided, the search will be performed in the whole drive.
 
+## Caching
+
+This connector has an optional caching feature, which will cache the documents it downloads from Google Drive. This
+will prevent the same documents from being downloaded repeatedly when a user continues a conversation on the same
+topic, or multiple users are asking questions related to the same documents.
+
+By default, the caching feature is not enabled. To enable it, set the env var `GDRIVE_CACHE_TYPE` to either:
+
+* `memory` - to cache the documents in the Python process itself using TTLCache from cachetools.
+* `redis` - to cache the documents in Redis.
+
+When using caching, the following env vars are also available:
+
+* `GDRIVE_REDIS_HOST` - Redis host to connect to
+* `GDRIVE_REDIS_PORT` - Redis port to connect to
+* `GDRIVE_REDIS_DB` - Redis database number to connect to
+* `GDRIVE_CACHE_MAXSIZE` - Maximum number of documents to store in the TTL cache when using TTL cache 
+* `GDRIVE_CACHE_EXPIRE_TIME` - The number of seconds to cache documents for, with either Redis or TTL cache
+
 ## Development
 
 Create a virtual environment and install dependencies with poetry. We recommend using in-project virtual environments:

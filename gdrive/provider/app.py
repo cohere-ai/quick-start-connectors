@@ -1,5 +1,4 @@
 import logging
-
 from connexion.exceptions import Unauthorized
 from flask import abort, request, current_app as app
 
